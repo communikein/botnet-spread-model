@@ -51,19 +51,21 @@ time_zone_min = -12
 time_zone_max = 14
 
 ### Simulation parameters
-# Number of nodes in the network
-population_size = 5000
+# Number of nodes in the network, it will be loaded from file
+population_size = -1
 # Base probability for link between two random nodes
 link_prob_base = 0.1
 
-# Probability to be infected without having an infected node in my neighbors
-initial_infection_prob = 0.005 / population_size
+# Probability to be infected without having an infected node in my neighbors, 
+# it will be computed once the graph is loaded from file.
+initial_infection_prob = -1
 # Probability of infections having an infected node in my neighbors
 infection_prob = 0.01
 
 # Number of Security Reserachers looking for threats at the same time
-# Only take the integer digits, leave out the decimal ones
-sr_amount = int(population_size * 0.005)
+# Only take the integer digits, leave out the decimal ones. It will be computed
+# once the graph is loaded from file.
+sr_amount = -1
 # Probability of a node to get an update for its antivirus, and hance recovered
 av_update_prob = 0.005
 # Probability of the botnet to be detected
@@ -87,45 +89,53 @@ ROLE_SPREAD = 6
 
 
 
-def init():
+def init(keep_patient_zero=True):
     global first
-    global time, day, hours, minutes
+    global steps, days, hours, minutes
     global network, next_network, positions
     global n_infected, n_susceptible, n_immune
     global n_spread, n_attack, n_control
     global infectedData, susceptibleData, immuneData
     global spreadData, attackData, controlData
     global botnet_detected
+    global population_size, initial_infection_prob, sr_amount
 
     first = True
-    time = 0
-    day = 0
-    hours = 0
-    minutes = 0
+    steps = days = hours = minutes = 0
     n_infected = n_susceptible = n_immune = 0
     n_attack = n_spread = n_control = 0
     botnet_detected = False
     
     # Generate network
-    if DEBUG:
-        print('Generating graph...')
-    network = generate_network(population_size)
+    print('Generating graph...')
+
+    network = load_graph()
+    population_size = len(network.nodes())
+    initial_infection_prob = 0.005 / population_size
+    sr_amount = int(population_size * 0.005)
     positions = get_nodes_positions(network)
-    if DEBUG:
-        print('Graph generated.')
-        print('---------------------------------------------')
+    
+    print('Graph generated.')
+    print('---------------------------------------------')
 
-    # Choose random 'patient zero'
-    i = random.randint(0, 1000)
-    network.node[i]['state'] = INFECTED
-    network.node[i]['role'] = ROLE_SPREAD
-    network.node[i]['just_infected'] = True
+    if not keep_patient_zero:
+        # Remove previously selected 'patient zero'
+        for i in network.nodes():
+            network.node[i]['state'] = SUSCEPTIBLE
+            network.node[i]['role'] = ROLE_NONE
+            network.node[i]['just_infected'] = False
 
-    if DEBUG:
-        print('Random \'patient zero\' chosen.')
-        print('Node n.' + str(i))
-        print('Time zone: ' + str(network.node[i]['time_zone']))
-        print('---------------------------------------------')
+        # Choose random 'patient zero'
+        i = random.randint(0, len(network.nodes()))
+        network.node[i]['state'] = INFECTED
+        network.node[i]['role'] = ROLE_SPREAD
+        network.node[i]['just_infected'] = True
+
+        if DEBUG:
+            print('Random \'patient zero\' chosen.')
+            print('Node n.' + str(i))
+            print('Time zone: ' + str(network.node[i]['time_zone']))
+            print('---------------------------------------------')
 
     n_spread = n_infected = 1
     n_susceptible = population_size - n_infected
@@ -142,8 +152,11 @@ def init():
     attackData = [n_attack]
     controlData = [n_control]
 
-    
     save_step_data()
+
+def load_graph():
+    graph = NX.read_gpickle('graph-data.pickle')
+    return graph
 
 def get_nodes_positions(network):
     positions = dict()
@@ -207,27 +220,27 @@ def draw():
                 with_labels = False)
 
     first = False
-    PL.title(get_time())
+    PL.title(print_time())
     PL.show()
 
     PL.figure(2)
     PL.cla()
     PL.plot(infectedData, 'r')
     PL.plot(immuneData, 'g')
-    PL.title('Botnet propagation - step ' + str(day * 24 * 4 + hours * 4 + minutes // 15))
+    PL.title('Botnet propagation - step ' + str(steps))
     
 
 def step():
-    global time, day, hours, minutes
+    global steps
     global network, next_network
     global n_infected, n_susceptible, n_immune
     global n_attack, n_control, n_spread
     global botnet_detected
 
-    time += 1
+    steps += 1
     n_infected = n_susceptible = n_immune = 0
     n_attack = n_control = n_spread = 0
-    save_time()
+    save_time(steps)
 
     # Check if the botnet has been detected
     botnet_detected = botnet_got_detected(network)
@@ -296,16 +309,15 @@ def step():
     
 
 def get_random_online_node(network):
-	online = False
-	while not online:
-		index = RD.randrange(0, population_size - 1)
-		node = network.node[index]
-		online = is_node_online(node)
+    online = False
+    while not online:
+        index = RD.randrange(0, population_size - 1)
+        node = network.node[index]
+        online = is_node_online(node)
 
-	return node
+    return node
 
 def is_node_online(node):
-    global hours
     local_time = hours + node['time_zone']
 
     if local_time >= 8 and local_time <= 22:
@@ -396,27 +408,29 @@ def choose_role():
 
 
 
-def save_time():
-    global day, time, hours, minutes
-    time_tmp = time * time_multiplier
+def save_time(steps):
+    global days, hours, minutes
+    
+    days = (steps * time_multiplier) / (24 * 60)
 
-    if time_tmp >= 24 * 60:
-        time = time_tmp - 24 * 60
-        day = day + 1
-
-    hours = time_tmp // 60
-    minutes = time_tmp - hours * 60
-
-def get_time():
-    global day, hours, minutes
-    return 'Day: ' + str(day) + ', Time: ' + str(hours) + ":" + str(minutes)
+    time = (steps * time_multiplier) - (days * 24 * 60)
+    hours = int(time / 60)
+    minutes = int(time - hours * 60)
 
 def print_time():
-    time = get_time()
-    print(time)
+    str_hours = '0' + str(hours)
+    if (hours >= 10):
+        str_hours = str(hours)
+
+    str_minutes = '0' + str(minutes)
+    if (minutes >= 10):
+        str_minutes = str(minutes)
+
+    message = 'Day: ' + str(days) + ', Time: ' + str(str_hours) + ":" + str(str_minutes)
+    return message
 
 def print_data():
-    print_time()
+    print(print_time())
     print('N. infected: ' + str(n_infected))
     print('N. immune: ' + str(n_immune))
     print('N. susceptible: ' + str(n_susceptible))
@@ -482,148 +496,6 @@ def save_step_data(path='results.txt'):
     f.write('attack: ' + str(n_attack) + '\n')
     f.write('control: ' + str(n_control) + '\n')
     f.close()
-
-
-
-def get_time_zone_difference(node_a, node_b):
-    time_zone_a = min(node_a['time_zone'], node_b['time_zone'])
-    time_zone_b = max(node_a['time_zone'], node_b['time_zone'])
-
-    if time_zone_a == time_zone_b:
-        return 0
-
-    diff_1 = -1
-    diff_2 = -1
-    steps = -1
-    range_check = range(-12, 14 + 1)
-    for i in range_check:
-        steps += 1
-
-        if time_zone_a == i:
-            diff_1 = 0
-
-        elif time_zone_b == i:
-            diff_1 += 1
-            diff_2 = len(range_check) - steps - 1
-
-            for j in range_check:
-                diff_2 += 1
-
-                if j == time_zone_a:
-                    break
-
-            break
-
-        elif diff_1 >= 0:
-            diff_1 += 1
-
-    return min(diff_1, diff_2)
-
-def generate_network(n, is_random=False):
-    # Create the nodes and populate them with defaults values
-    if DEBUG:
-        print('Generating ' + str(n) + ' nodes...')
-
-    # Create a non-directed graph
-    G = NX.Graph()
-    
-    # Add n nodes to the graph
-    G.add_nodes_from(range(n))
-    G = init_nodes(G)
-    
-    # If the link probability is grater or equal to 0, return a complete graph
-    if link_prob_base >= 1:
-        return complete_graph(n, create_using=G)
-
-    # Get all the possible links
-    if DEBUG:
-        print('Generating all the possible egdes...')
-    edges = itertools.combinations(range(n), 2)
-
-    # Choose the links to keep either based on the time zones or randomly
-    if not is_random:
-        if DEBUG:
-            print('Choosing the links to keep based on nodes location...')
-        for e in edges:
-            distance = get_distance(G.node[e[0]], G.node[e[1]])
-            if random.random() < link_prob(distance, link_prob_base):
-                G.add_edge(*e)
-    else:
-        if DEBUG:
-            print('Choosing the links to keep randomly...')
-        for e in edges:
-            if random.random() < link_prob_base:
-                G.add_edge(*e)
-
-    return G
-
-def choose_latitude():
-    rnd = random.uniform(-90, 90)
-    return round(rnd, 2)
-
-def choose_longitude():
-    rnd = random.uniform(-180, 180)
-    return round(rnd, 2)
-
-def init_nodes(graph):
-    for i in graph.nodes():
-        # Generate valid coordinates
-        while True:
-            lat = choose_latitude()
-            lng = choose_longitude()
-            time_zone = get_time_zone(lat, lng)
-            if time_zone is not None:
-                break
-
-        # Assign values to node
-        graph.node[i]['lat'] = lat
-        graph.node[i]['lng'] = lng
-        graph.node[i]['time_zone'] = time_zone
-        graph.node[i]['state'] = SUSCEPTIBLE
-        graph.node[i]['role'] = ROLE_NONE
-        graph.node[i]['just_infected'] = False
-
-    return graph
-
-def get_time_zone(latitude, longitude):
-    today = datetime.now()
-
-    #print('lat: ' + str(latitude) + ', lng: ' + str(longitude))
-
-    tz_target_name = tf.timezone_at(lat=latitude, lng=longitude)
-    if (tz_target_name is None):
-        return None
-
-    tz_target = timezone(tz_target_name)
-    today_target = tz_target.localize(today)
-    today_utc = utc.localize(today)
-
-    return (today_utc - today_target).total_seconds() // (60 * 60)
-
-def get_distance(node_a, node_b):
-    dlon = node_b['lng'] - node_a['lng']
-    dlat = node_b['lat'] - node_a['lat']
-
-    a = sin(dlat / 2)**2 + cos(node_a['lat']) * cos(node_b['lat']) * sin(dlon / 2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-    return R * c
-
-def link_prob(distance, base_prob):
-    min_prob = 0.000039
-    max_prob = 0.999961
-
-    b = log(max_prob / min_prob) / (max_prob - min_prob)
-    #print('B: ' + str(b))
-
-    a = min_prob / exp(b * min_prob)
-    #print('A: ' + str(a))
-
-    prob = 1 - (distance / 20040.0)
-
-    exp_prob = a * exp(prob * b)
-
-    return base_prob * exp_prob
 
 
 

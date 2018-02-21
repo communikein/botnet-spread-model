@@ -2,7 +2,6 @@
 #
 # Project by Maracani Elia
 # Matricola: 763734
-
 import scipy as SP
 import networkx as NX
 import random
@@ -35,8 +34,6 @@ R = 6373.0
 
 DEBUG = True
 
-# Number of nodes in the network
-population_size = 500
 # Base probability for link between two random nodes
 link_prob_base = 0.1
 
@@ -46,8 +43,9 @@ INFECTED = 1
 ROLE_NONE = 3
 ROLE_SPREAD = 6
 
+global network
 
-def init():
+def init(population_size):
     global network, positions
 
     first = True
@@ -224,11 +222,12 @@ def get_nodes_positions(network):
 
     return get_nodes_positions
 
-def saveGeneratedGraph():
-    return
+def saveGraph():
+    NX.write_gpickle(network, 'graph-data.pickle')
 
 
 
 
 if __name__ == "__main__":
-    init()
+    init(population_size=5000)
+    saveGraph()
