@@ -7,6 +7,9 @@ import networkx as NX
 import random
 import itertools
 
+import simplejson as json
+import pickle
+
 from timezonefinder import TimezoneFinder
 import pytz
 from pytz import timezone
@@ -223,11 +226,27 @@ def get_nodes_positions(network):
     return get_nodes_positions
 
 def saveGraph():
-    NX.write_gpickle(network, 'graph-data.pickle')
+    NX.write_gpickle(network, '../data/graph-data.pickle')
 
+def loadInternetDevicesJson():
+    global internet_data
+
+    with open('../data/internet-usage-data-cleaned.json', 'r') as f:
+        internet_data = json.load(f)
+
+    with open('../data/internet-usage-data.p', 'wb') as fp:
+        pickle.dump(internet_data, fp, protocol=pickle.HIGHEST_PROTOCOL)
+
+def loadPickletInternetData():
+    global internet_data
+
+    with open('../data/internet-usage-data.p', 'rb') as fp:
+        internet_data = pickle.load(fp)
 
 
 
 if __name__ == "__main__":
+    loadPickletInternetData()
+    print(internet_data)
     init(population_size=5000)
     saveGraph()
