@@ -155,7 +155,7 @@ def init(keep_patient_zero=True):
     save_step_data()
 
 def load_graph():
-    graph = NX.read_gpickle('graph-data.pickle')
+    graph = NX.read_gpickle('../data/graph-data.pickle')
     return graph
 
 def get_nodes_positions(network):

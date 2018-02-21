@@ -1,0 +1,10 @@
+Possible sources of data:
+- Countries population (2017): 
+	https://data.worldbank.org/indicator/SP.POP.TOTL?end=2017&start=2017&view=map&year=2017
+- Number of internet connected devices by country (2016): 
+	https://en.wikipedia.org/wiki/List_of_countries_by_number_of_Internet_users#List
+
+Tools to convert Wikipedia table to JSON:
+- http://wikitable2csv.ggor.de/
+- http://www.csvjson.com/csv2json
+- https://subtitletools.com/convert-text-files-to-utf8-online

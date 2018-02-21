@@ -1,0 +1,1072 @@
+﻿[
+  {
+    "country": "China",
+    "devices": 746662194,
+    "percentage": 0.532
+  },
+  {
+    "country": "India",
+    "devices": 391292635,
+    "percentage": 0.2955
+  },
+  {
+    "country": "United States",
+    "devices": 245436423,
+    "percentage": 0.7618
+  },
+  {
+    "country": "Brazil",
+    "devices": 123927230,
+    "percentage": 0.5968
+  },
+  {
+    "country": "Japan",
+    "devices": 117528631,
+    "percentage": 0.92
+  },
+  {
+    "country": "Russia",
+    "devices": 110003284,
+    "percentage": 0.7641
+  },
+  {
+    "country": "Mexico",
+    "devices": 75937568,
+    "percentage": 0.5954
+  },
+  {
+    "country": "Germany",
+    "devices": 73436503,
+    "percentage": 0.8965
+  },
+  {
+    "country": "Indonesia",
+    "devices": 66244991,
+    "percentage": 0.2537
+  },
+  {
+    "country": "United Kingdom",
+    "devices": 62354410,
+    "percentage": 0.9478
+  },
+  {
+    "country": "Philippines",
+    "devices": 57342723,
+    "percentage": 0.555
+  },
+  {
+    "country": "France",
+    "devices": 55413854,
+    "percentage": 0.8562
+  },
+  {
+    "country": "Nigeria",
+    "devices": 47743541,
+    "percentage": 0.2567
+  },
+  {
+    "country": "South Korea",
+    "devices": 47094267,
+    "percentage": 0.9272
+  },
+  {
+    "country": "Turkey",
+    "devices": 46395500,
+    "percentage": 0.5835
+  },
+  {
+    "country": "Vietnam",
+    "devices": 43974618,
+    "percentage": 0.465
+  },
+  {
+    "country": "Iran",
+    "devices": 42731675,
+    "percentage": 0.5323
+  },
+  {
+    "country": "Egypt",
+    "devices": 37519531,
+    "percentage": 0.3921
+  },
+  {
+    "country": "Spain",
+    "devices": 37337607,
+    "percentage": 0.8056
+  },
+  {
+    "country": "Italy",
+    "devices": 36442438,
+    "percentage": 0.6132
+  },
+  {
+    "country": "Thailand",
+    "devices": 32710169,
+    "percentage": 0.475
+  },
+  {
+    "country": "Canada",
+    "devices": 32602776,
+    "percentage": 0.8984
+  },
+  {
+    "country": "Argentina",
+    "devices": 30758972,
+    "percentage": 0.7015
+  },
+  {
+    "country": "South Africa",
+    "devices": 30248355,
+    "percentage": 0.54
+  },
+  {
+    "country": "Pakistan",
+    "devices": 29965859,
+    "percentage": 0.1551
+  },
+  {
+    "country": "Bangladesh",
+    "devices": 29738660,
+    "percentage": 0.1825
+  },
+  {
+    "country": "Colombia",
+    "devices": 28287098,
+    "percentage": 0.5814
+  },
+  {
+    "country": "Poland",
+    "devices": 28018492,
+    "percentage": 0.733
+  },
+  {
+    "country": "Malaysia",
+    "devices": 24572446,
+    "percentage": 0.7879
+  },
+  {
+    "country": "Saudi Arabia",
+    "devices": 23803319,
+    "percentage": 0.7375
+  },
+  {
+    "country": "Ukraine",
+    "devices": 23321390,
+    "percentage": 0.5248
+  },
+  {
+    "country": "Australia",
+    "devices": 21288648,
+    "percentage": 0.8824
+  },
+  {
+    "country": "Morocco",
+    "devices": 20555783,
+    "percentage": 0.5827
+  },
+  {
+    "country": "Venezuela",
+    "devices": 18940907,
+    "percentage": 0.6
+  },
+  {
+    "country": "Taiwan",
+    "devices": 18786473,
+    "percentage": 0.7975
+  },
+  {
+    "country": "Algeria",
+    "devices": 17440299,
+    "percentage": 0.4295
+  },
+  {
+    "country": "Ethiopia",
+    "devices": 15739371,
+    "percentage": 0.1537
+  },
+  {
+    "country": "Netherlands",
+    "devices": 15358245,
+    "percentage": 0.9041
+  },
+  {
+    "country": "Uzbekistan",
+    "devices": 14713955,
+    "percentage": 0.4679
+  },
+  {
+    "country": "Peru",
+    "devices": 14444387,
+    "percentage": 0.4546
+  },
+  {
+    "country": "Kazakhstan",
+    "devices": 13814581,
+    "percentage": 0.768
+  },
+  {
+    "country": "Myanmar",
+    "devices": 13258325,
+    "percentage": 0.2507
+  },
+  {
+    "country": "Kenya",
+    "devices": 12600007,
+    "percentage": 0.26
+  },
+  {
+    "country": "Chile",
+    "devices": 11822229,
+    "percentage": 0.6601
+  },
+  {
+    "country": "Romania",
+    "devices": 11767959,
+    "percentage": 0.595
+  },
+  {
+    "country": "Sudan",
+    "devices": 11082072,
+    "percentage": 0.28
+  },
+  {
+    "country": "Belgium",
+    "devices": 9827270,
+    "percentage": 0.8652
+  },
+  {
+    "country": "Ghana",
+    "devices": 9779273,
+    "percentage": 0.3467
+  },
+  {
+    "country": "Uganda",
+    "devices": 9077567,
+    "percentage": 0.2188
+  },
+  {
+    "country": "Sweden",
+    "devices": 9002326,
+    "percentage": 0.9151
+  },
+  {
+    "country": "Ecuador",
+    "devices": 8857767,
+    "percentage": 0.5406
+  },
+  {
+    "country": "United Arab Emirates",
+    "devices": 8398268,
+    "percentage": 0.906
+  },
+  {
+    "country": "Czech Republic",
+    "devices": 8115252,
+    "percentage": 0.7648
+  },
+  {
+    "country": "Iraq",
+    "devices": 7898106,
+    "percentage": 0.2123
+  },
+  {
+    "country": "Hungary",
+    "devices": 7730451,
+    "percentage": 0.7926
+  },
+  {
+    "country": "Greece",
+    "devices": 7726829,
+    "percentage": 0.6909
+  },
+  {
+    "country": "Azerbaijan",
+    "devices": 7605244,
+    "percentage": 0.782
+  },
+  {
+    "country": "Switzerland",
+    "devices": 7511995,
+    "percentage": 0.8941
+  },
+  {
+    "country": "Austria",
+    "devices": 7346074,
+    "percentage": 0.8432
+  },
+  {
+    "country": "Portugal",
+    "devices": 7303699,
+    "percentage": 0.7042
+  },
+  {
+    "country": "Tanzania",
+    "devices": 7224386,
+    "percentage": 0.13
+  },
+  {
+    "country": "Yemen",
+    "devices": 6780200,
+    "percentage": 0.2458
+  },
+  {
+    "country": "Belarus",
+    "devices": 6741258,
+    "percentage": 0.7111
+  },
+  {
+    "country": "Sri Lanka",
+    "devices": 6665916,
+    "percentage": 0.3205
+  },
+  {
+    "country": "Israel",
+    "devices": 6535440,
+    "percentage": 0.7978
+  },
+  {
+    "country": "Dominican Republic",
+    "devices": 6530903,
+    "percentage": 0.6133
+  },
+  {
+    "country": "Hong Kong",
+    "devices": 6375381,
+    "percentage": 0.873
+  },
+  {
+    "country": "Ivory Coast",
+    "devices": 6286527,
+    "percentage": 0.2653
+  },
+  {
+    "country": "Serbia",
+    "devices": 5914748,
+    "percentage": 0.6706
+  },
+  {
+    "country": "Jordan",
+    "devices": 5890965,
+    "percentage": 0.623
+  },
+  {
+    "country": "Syria",
+    "devices": 5873785,
+    "percentage": 0.3187
+  },
+  {
+    "country": "Cameroon",
+    "devices": 5859797,
+    "percentage": 0.25
+  },
+  {
+    "country": "Tunisia",
+    "devices": 5801972,
+    "percentage": 0.5088
+  },
+  {
+    "country": "Guatemala",
+    "devices": 5722610,
+    "percentage": 0.3451
+  },
+  {
+    "country": "Nepal",
+    "devices": 5706708,
+    "percentage": 0.1969
+  },
+  {
+    "country": "Denmark",
+    "devices": 5538800,
+    "percentage": 0.9697
+  },
+  {
+    "country": "Norway",
+    "devices": 5112817,
+    "percentage": 0.973
+  },
+  {
+    "country": "Mozambique",
+    "devices": 5050924,
+    "percentage": 0.1752
+  },
+  {
+    "country": "Democratic Republic of the Congo",
+    "devices": 4889515,
+    "percentage": 0.0621
+  },
+  {
+    "country": "Finland",
+    "devices": 4826246,
+    "percentage": 0.877
+  },
+  {
+    "country": "Lebanon",
+    "devices": 4571675,
+    "percentage": 0.7611
+  },
+  {
+    "country": "Singapore",
+    "devices": 4554189,
+    "percentage": 0.81
+  },
+  {
+    "country": "Cuba",
+    "devices": 4449238,
+    "percentage": 0.3877
+  },
+  {
+    "country": "Slovakia",
+    "devices": 4381507,
+    "percentage": 0.8048
+  },
+  {
+    "country": "Bolivia",
+    "devices": 4322489,
+    "percentage": 0.397
+  },
+  {
+    "country": "Bulgaria",
+    "devices": 4266773,
+    "percentage": 0.5983
+  },
+  {
+    "country": "Zambia",
+    "devices": 4232464,
+    "percentage": 0.2551
+  },
+  {
+    "country": "New Zealand",
+    "devices": 4123439,
+    "percentage": 0.8847
+  },
+  {
+    "country": "Cambodia",
+    "devices": 4030438,
+    "percentage": 0.2557
+  },
+  {
+    "country": "Senegal",
+    "devices": 3954620,
+    "percentage": 0.2566
+  },
+  {
+    "country": "Ireland",
+    "devices": 3883418,
+    "percentage": 0.8217
+  },
+  {
+    "country": "Angola",
+    "devices": 3745750,
+    "percentage": 0.13
+  },
+  {
+    "country": "Zimbabwe",
+    "devices": 3733964,
+    "percentage": 0.2312
+  },
+  {
+    "country": "Afghanistan",
+    "devices": 3673539,
+    "percentage": 0.106
+  },
+  {
+    "country": "Paraguay",
+    "devices": 3453445,
+    "percentage": 0.5135
+  },
+  {
+    "country": "Costa Rica",
+    "devices": 3207258,
+    "percentage": 0.6603
+  },
+  {
+    "country": "Kuwait",
+    "devices": 3176010,
+    "percentage": 0.7837
+  },
+  {
+    "country": "Oman",
+    "devices": 3089369,
+    "percentage": 0.6982
+  },
+  {
+    "country": "Croatia",
+    "devices": 3063044,
+    "percentage": 0.727
+  },
+  {
+    "country": "Puerto Rico",
+    "devices": 2946059,
+    "percentage": 0.8032
+  },
+  {
+    "country": "Palestinian Authority",
+    "devices": 2930953,
+    "percentage": 0.6118
+  },
+  {
+    "country": "Moldova",
+    "devices": 2882322,
+    "percentage": 0.71
+  },
+  {
+    "country": "Honduras",
+    "devices": 2733860,
+    "percentage": 0.3
+  },
+  {
+    "country": "Burkina Faso",
+    "devices": 2603042,
+    "percentage": 0.1396
+  },
+  {
+    "country": "Bosnia and Herzegovina",
+    "devices": 2438208,
+    "percentage": 0.6933
+  },
+  {
+    "country": "Qatar",
+    "devices": 2423068,
+    "percentage": 0.9429
+  },
+  {
+    "country": "Rwanda",
+    "devices": 2383501,
+    "percentage": 0.2
+  },
+  {
+    "country": "Uruguay",
+    "devices": 2286820,
+    "percentage": 0.664
+  },
+  {
+    "country": "Panama",
+    "devices": 2178424,
+    "percentage": 0.54
+  },
+  {
+    "country": "Lithuania",
+    "devices": 2163155,
+    "percentage": 0.7438
+  },
+  {
+    "country": "Kyrgyzstan",
+    "devices": 2054728,
+    "percentage": 0.345
+  },
+  {
+    "country": "Mali",
+    "devices": 1999226,
+    "percentage": 0.1111
+  },
+  {
+    "country": "Georgia",
+    "devices": 1962702,
+    "percentage": 0.5
+  },
+  {
+    "country": "Albania",
+    "devices": 1941925,
+    "percentage": 0.6636
+  },
+  {
+    "country": "El Salvador",
+    "devices": 1839969,
+    "percentage": 0.29
+  },
+  {
+    "country": "Armenia",
+    "devices": 1813386,
+    "percentage": 0.62
+  },
+  {
+    "country": "Tajikistan",
+    "devices": 1788044,
+    "percentage": 0.2047
+  },
+  {
+    "country": "Malawi",
+    "devices": 1738600,
+    "percentage": 0.0961
+  },
+  {
+    "country": "Latvia",
+    "devices": 1574256,
+    "percentage": 0.7989
+  },
+  {
+    "country": "Slovenia",
+    "devices": 1568786,
+    "percentage": 0.755
+  },
+  {
+    "country": "Nicaragua",
+    "devices": 1511037,
+    "percentage": 0.2457
+  },
+  {
+    "country": "Macedonia",
+    "devices": 1501798,
+    "percentage": 0.7216
+  },
+  {
+    "country": "Laos",
+    "devices": 1478051,
+    "percentage": 0.2187
+  },
+  {
+    "country": "Bahrain",
+    "devices": 1396668,
+    "percentage": 0.98
+  },
+  {
+    "country": "Haiti",
+    "devices": 1326629,
+    "percentage": 0.1223
+  },
+  {
+    "country": "Benin",
+    "devices": 1303589,
+    "percentage": 0.1199
+  },
+  {
+    "country": "Jamaica",
+    "devices": 1296610,
+    "percentage": 0.45
+  },
+  {
+    "country": "Libya",
+    "devices": 1275642,
+    "percentage": 0.2027
+  },
+  {
+    "country": "Guinea",
+    "devices": 1214801,
+    "percentage": 0.098
+  },
+  {
+    "country": "Madagascar",
+    "devices": 1172533,
+    "percentage": 0.0471
+  },
+  {
+    "country": "Estonia",
+    "devices": 1144974,
+    "percentage": 0.8724
+  },
+  {
+    "country": "Turkmenistan",
+    "devices": 1018691,
+    "percentage": 0.1799
+  },
+  {
+    "country": "Trinidad and Tobago",
+    "devices": 1000517,
+    "percentage": 0.733
+  },
+  {
+    "country": "Gabon",
+    "devices": 951287,
+    "percentage": 0.4805
+  },
+  {
+    "country": "Niger",
+    "devices": 893073,
+    "percentage": 0.0432
+  },
+  {
+    "country": "Cyprus",
+    "devices": 888125,
+    "percentage": 0.759
+  },
+  {
+    "country": "Botswana",
+    "devices": 885702,
+    "percentage": 0.275
+  },
+  {
+    "country": "Sierra Leone",
+    "devices": 870532,
+    "percentage": 0.1177
+  },
+  {
+    "country": "Togo",
+    "devices": 860280,
+    "percentage": 0.1131
+  },
+  {
+    "country": "South Sudan",
+    "devices": 819459,
+    "percentage": 0.067
+  },
+  {
+    "country": "Papua New Guinea",
+    "devices": 776159,
+    "percentage": 0.096
+  },
+  {
+    "country": "Mauritania",
+    "devices": 774183,
+    "percentage": 0.18
+  },
+  {
+    "country": "Namibia",
+    "devices": 769455,
+    "percentage": 0.3103
+  },
+  {
+    "country": "Chad",
+    "devices": 722627,
+    "percentage": 0.05
+  },
+  {
+    "country": "Mongolia",
+    "devices": 674201,
+    "percentage": 0.2227
+  },
+  {
+    "country": "Mauritius",
+    "devices": 671833,
+    "percentage": 0.5323
+  },
+  {
+    "country": "Lesotho",
+    "devices": 602965,
+    "percentage": 0.2736
+  },
+  {
+    "country": "Luxembourg",
+    "devices": 561295,
+    "percentage": 0.9749
+  },
+  {
+    "country": "Burundi",
+    "devices": 544097,
+    "percentage": 0.0517
+  },
+  {
+    "country": "Macau",
+    "devices": 499773,
+    "percentage": 0.8164
+  },
+  {
+    "country": "Montenegro",
+    "devices": 439276,
+    "percentage": 0.6988
+  },
+  {
+    "country": "Fiji",
+    "devices": 418013,
+    "percentage": 0.4651
+  },
+  {
+    "country": "Republic of the Congo",
+    "devices": 416217,
+    "percentage": 0.0812
+  },
+  {
+    "country": "Swaziland",
+    "devices": 383723,
+    "percentage": 0.2857
+  },
+  {
+    "country": "The Gambia",
+    "devices": 377123,
+    "percentage": 0.185
+  },
+  {
+    "country": "Liberia",
+    "devices": 337732,
+    "percentage": 0.0732
+  },
+  {
+    "country": "Bhutan",
+    "devices": 333226,
+    "percentage": 0.4177
+  },
+  {
+    "country": "Malta",
+    "devices": 331853,
+    "percentage": 0.7729
+  },
+  {
+    "country": "Iceland",
+    "devices": 326622,
+    "percentage": 0.9824
+  },
+  {
+    "country": "Timor Leste",
+    "devices": 320339,
+    "percentage": 0.2525
+  },
+  {
+    "country": "Brunei",
+    "devices": 317397,
+    "percentage": 0.75
+  },
+  {
+    "country": "The Bahamas",
+    "devices": 312986,
+    "percentage": 0.8
+  },
+  {
+    "country": "Equatorial Guinea",
+    "devices": 290470,
+    "percentage": 0.2378
+  },
+  {
+    "country": "Guyana",
+    "devices": 275760,
+    "percentage": 0.3566
+  },
+  {
+    "country": "Somalia",
+    "devices": 269178,
+    "percentage": 0.0188
+  },
+  {
+    "country": "Cabo Verde",
+    "devices": 259906,
+    "percentage": 0.4817
+  },
+  {
+    "country": "Suriname",
+    "devices": 253499,
+    "percentage": 0.454
+  },
+  {
+    "country": "Maldives",
+    "devices": 252761,
+    "percentage": 0.5909
+  },
+  {
+    "country": "Barbados",
+    "devices": 226715,
+    "percentage": 0.7955
+  },
+  {
+    "country": "New Caledonia",
+    "devices": 194707,
+    "percentage": ""
+  },
+  {
+    "country": "French Polynesia",
+    "devices": 191774,
+    "percentage": 0.6844
+  },
+  {
+    "country": "Central African Republic",
+    "devices": 183785,
+    "percentage": 0.04
+  },
+  {
+    "country": "Belize",
+    "devices": 163588,
+    "percentage": 0.4458
+  },
+  {
+    "country": "Guam",
+    "devices": 125446,
+    "percentage": 0.7701
+  },
+  {
+    "country": "Djibouti",
+    "devices": 123728,
+    "percentage": 0.1313
+  },
+  {
+    "country": "Aruba",
+    "devices": 98051,
+    "percentage": 0.9354
+  },
+  {
+    "country": "Saint Lucia",
+    "devices": 83186,
+    "percentage": 0.4673
+  },
+  {
+    "country": "Andorra",
+    "devices": 75681,
+    "percentage": ""
+  },
+  {
+    "country": "Antigua and Barbuda",
+    "devices": 73702,
+    "percentage": 0.73
+  },
+  {
+    "country": "Guinea-Bissau",
+    "devices": 68270,
+    "percentage": 0.0376
+  },
+  {
+    "country": "Solomon Islands",
+    "devices": 65936,
+    "percentage": 0.11
+  },
+  {
+    "country": "Vanuatu",
+    "devices": 64896,
+    "percentage": 0.24
+  },
+  {
+    "country": "Comoros",
+    "devices": 63170,
+    "percentage": 0.0794
+  },
+  {
+    "country": "U.S. Virgin Islands",
+    "devices": 62539,
+    "percentage": 0.5961
+  },
+  {
+    "country": "Saint Vincent and the Grenadines",
+    "devices": 60929,
+    "percentage": 0.5557
+  },
+  {
+    "country": "Bermuda",
+    "devices": 60432,
+    "percentage": 0.98
+  },
+  {
+    "country": "Grenada",
+    "devices": 59947,
+    "percentage": 0.5586
+  },
+  {
+    "country": "Eritrea",
+    "devices": 58465,
+    "percentage": 0.0118
+  },
+  {
+    "country": "Samoa",
+    "devices": 57386,
+    "percentage": 0.2941
+  },
+  {
+    "country": "São Tomé and Príncipe",
+    "devices": 55974,
+    "percentage": 0.28
+  },
+  {
+    "country": "Seychelles",
+    "devices": 53248,
+    "percentage": 0.5651
+  },
+  {
+    "country": "Dominica",
+    "devices": 49296,
+    "percentage": 0.6703
+  },
+  {
+    "country": "Cayman Islands",
+    "devices": 48004,
+    "percentage": 0.79
+  },
+  {
+    "country": "Faroe Islands",
+    "devices": 46715,
+    "percentage": 0.9511
+  },
+  {
+    "country": "Tonga",
+    "devices": 42795,
+    "percentage": 0.3995
+  },
+  {
+    "country": "Saint Kitts and Nevis",
+    "devices": 42113,
+    "percentage": 0.7682
+  },
+  {
+    "country": "Jersey",
+    "devices": 38958,
+    "percentage": ""
+  },
+  {
+    "country": "Greenland",
+    "devices": 38642,
+    "percentage": 0.685
+  },
+  {
+    "country": "Liechtenstein",
+    "devices": 36946,
+    "percentage": 0.9809
+  },
+  {
+    "country": "Monaco",
+    "devices": 36654,
+    "percentage": 0.9521
+  },
+  {
+    "country": "Micronesia, Federated States of",
+    "devices": 34996,
+    "percentage": 0.3335
+  },
+  {
+    "country": "Gibraltar",
+    "devices": 32494,
+    "percentage": 0.9444
+  },
+  {
+    "country": "San Marino",
+    "devices": 16484,
+    "percentage": ""
+  },
+  {
+    "country": "Marshall Islands",
+    "devices": 15808,
+    "percentage": 0.2979
+  },
+  {
+    "country": "Kiribati",
+    "devices": 15672,
+    "percentage": 0.137
+  },
+  {
+    "country": "British Virgin Islands",
+    "devices": 14456,
+    "percentage": ""
+  },
+  {
+    "country": "Anguilla",
+    "devices": 12043,
+    "percentage": 0.8157
+  },
+  {
+    "country": "Tuvalu",
+    "devices": 5106,
+    "percentage": 0.4601
+  },
+  {
+    "country": "Saint Helena",
+    "devices": 2906,
+    "percentage": ""
+  },
+  {
+    "country": "Falkland Islands",
+    "devices": 2881,
+    "percentage": 0.9902
+  },
+  {
+    "country": "Montserrat",
+    "devices": 2833,
+    "percentage": ""
+  },
+  {
+    "country": "Wallis and Futuna",
+    "devices": 1383,
+    "percentage": ""
+  },
+  {
+    "country": "Niue",
+    "devices": 1034,
+    "percentage": ""
+  },
+  {
+    "country": "Ascension",
+    "devices": 361,
+    "percentage": ""
+  }
+]
