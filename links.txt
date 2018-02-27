@@ -3,6 +3,21 @@ Possible sources of data:
 	https://data.worldbank.org/indicator/SP.POP.TOTL?end=2017&start=2017&view=map&year=2017
 - Number of internet connected devices by country (2016): 
 	https://en.wikipedia.org/wiki/List_of_countries_by_number_of_Internet_users#List
+- Country name code
+	http://www.nationsonline.org/oneworld/country_code_list.htm
+- Country coords bounds
+	https://www.mapdevelopers.com/geocode_bounding_box.php
+- Countries ISO code
+	https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+- Get country bounds
+	https://github.com/googlemaps/google-maps-services-python
+- Coordinates precision
+	https://gis.stackexchange.com/questions/8650/measuring-accuracy-of-latitude-and-longitude
+- List of country codes for TimeZoneFinder Time Zones
+	https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
+	https://www.gps-coordinates.net/
+	http://www.geonames.org/export/
 
 Tools to convert Wikipedia table to JSON:
 - http://wikitable2csv.ggor.de/
