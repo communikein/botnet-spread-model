@@ -1,0 +1,2 @@
+population_size,link_prob_base,initial_infection_prob,infection_prob,av_update_prob,spread_prob,attack_prob
+33940,0.1,1.47318797879e-07,0.01,0.005,0.4,0.6
