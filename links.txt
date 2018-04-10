@@ -23,3 +23,6 @@ Tools to convert Wikipedia table to JSON:
 - http://wikitable2csv.ggor.de/
 - http://www.csvjson.com/csv2json
 - https://subtitletools.com/convert-text-files-to-utf8-online
+
+Fuchsia use the same peer-2-peer approach
+- https://9to5google.com/2018/02/16/fuchsia-friday-instant-apps/

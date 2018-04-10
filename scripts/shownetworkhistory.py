@@ -1,5 +1,6 @@
 import matplotlib
 matplotlib.use('TkAgg')
+import matplotlib.image as mpimg
 
 import pylab as PL
 import random as RD
@@ -8,32 +9,40 @@ import networkx as NX
 import random
 import itertools
 
+import os
 import pickle
+import numpy as np
 
 SUSCEPTIBLE = 0
 INFECTED = 1
 IMMUNE = 2
 
-history_path_base = '../data/results/'
+history_path_base = '../data/results/central-server-hybrid/01'
 simulation_number = 1
-history_path = history_path_base + str(simulation_number) + '/history/'
+history_path = history_path_base + str(simulation_number) + '/'
 
-def loadNetworkHistoryFile(step):
+def load_network_start():
+    graph = NX.read_gpickle('../data/graph-data-hybrid.p')
+    return graph
+
+def load_network_history(day, step):
     data = dict()
 
-    # Read data from CSV and convert to JSON
-    fieldNames = ('infected', 'immune', 'susceptible', 'spread', 'attack', 'control')
-    with open(results_path, 'r') as f:
-        reader = csv.DictReader(f, fieldNames)
-        rows = [row for row in reader]
-        # Remove the headers
-        del rows[0]
-    
-    out = json.dumps(rows)
-    return json.loads(out)
+    history_step_file = history_path + str(day) + '/'
+    history_step_file += 'botnet-evolution-' + '0' * (4 - len(str(step))) + str(step) + '.p'
+
+    try:
+        with open(history_step_file, 'rb') as origin:
+            data = pickle.load(origin)
+    except:
+        return None
+
+    return data
 
 
-def draw_botnet_status_map(background_image, network, positions):
+def draw_botnet_status_map(network):
+    positions = [[network.node[i]['position']['x'], network.node[i]['position']['y']] for i in network.nodes()]
+
     PL.figure(1)
     PL.cla()
     PL.imshow(background_image, cmap='gray')
@@ -43,7 +52,7 @@ def draw_botnet_status_map(background_image, network, positions):
     NX.draw_networkx_nodes(network,
             pos = positions,
             node_color = get_nodes_color(network),
-            node_size = 10,
+            node_size = 1,
             with_labels = False)
 
     PL.show()
@@ -80,6 +89,14 @@ def get_node_color(node):
         elif node['state'] == SUSCEPTIBLE:
             return '#000050'
 
+def is_node_online(node):
+    local_time = hour + node['time_zone']
+
+    if local_time >= 8 and local_time <= 22:
+        return True
+    else:
+        return False
+
 def get_nodes_color(network):
     nodes_color = [get_node_color(network.node[i]) for i in network.nodes()]
 
@@ -89,25 +106,36 @@ def get_nodes_color(network):
 def init():
     global step
     global network
+    global background_image
+    global day, hour
 
-    
+    day = hour = step = 0
 
-    step = 0
-    statistics = loadStatisticsFile()
-
-    print(type(statistics))
+    background_image = mpimg.imread('world.png')
+    network = load_network_start()
+    history = load_network_history(0, 0)
 
 def draw():
-    draw_botnet_status_map(infectedData, immuneData, step)
+    if network is not None:
+        draw_botnet_status_map(network)
 
 def step():
-    global step
-    global infectedData, immuneData
+    global network
+    global step, hour, day
 
-    infectedData.append(int(statistics[step]['infected']))
-    immuneData.append(int(statistics[step]['immune']))
+    day = (step * 15) / (24 * 60)
+
+    time = (step * 15) - (day * 24 * 60)
+    hour = int(time / 60)
 
     step += 1
+    print('STEP: ' + str(step))
+    history = load_network_history(day, step)
+
+    for i in history:
+        network.node[i]['state'] = history[i]['state']
+        network.node[i]['role'] = history[i]['role']
+    
 
 
 import pycxsimulator

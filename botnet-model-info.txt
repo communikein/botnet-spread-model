@@ -1,0 +1,17 @@
+Il paziente zero avrà funzione di Control (C) e di Spread (S).
+La funzione di Spread rimane attiva solo fino a quando non infetta un altro nodo.
+Il nuovo nodo infettato sarà per forza un nodo di tipo Spread (S).
+I successivi nodi che infetterà potranno essere sia di tipo Spread (S) che di tipo Attack (A).
+
+Ogni nodo infetto, che non sia di tipo Control, ha una lista di tutti i nodi di tipo Control.
+La lista è crittografata.
+Quando un nuovo nodo viene infettato gli viene inviata la lista aggiornata.
+Quando c'è una modifica dei nodi Control (aggiunta o rimozione) la modifica viene propagata a tutti i nodi della rete.
+
+Ogni nodo di tipo Control può avere un massimo di MAX nodi client a lui collegati.
+Quando un nodo Spread client di un nodo Control infetta un nuovo nodo, il nuovo nodo rientra a far parte dei client del nodo Control padre.
+Se il nodo Control padre ha già raggiunto il numero massimo di client, il nuovo nodo client diventerà di tipo Control a sua volta e sarà collegato al nodo Control padre.
+
+Quando un nodo di tipo Spread (S) non ha nessun nodo suscettibile tra i suoi vicini diventa di tipo Attack (A), segnalando la cosa al nodo Control di cui è client (in questo modo il Control tiene traccia di quanti nodi di un certo tipo sono suoi client.)
+(?) Un nodo di tipo Attack (A) puù diventare di tipo Spread (S) solo se ci sono meno di MIN_SPREAD % nodi Spread client dello stesso nodo Control.
+
