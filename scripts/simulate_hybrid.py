@@ -28,12 +28,7 @@ time_multiplier = 15
 ### Simulation parameters
 # Number of nodes in the network, it will be loaded from file
 population_size = -1
-# Base probability for link between two random nodes
-link_prob_base = 0.1
 
-# Probability to be infected without having an infected node in my neighbors, 
-# it will be computed once the graph is loaded from file.
-initial_infection_prob = -1
 # Probability of infections having an infected node in my neighbors
 infection_prob = 0.01
 
@@ -92,7 +87,7 @@ def init(keep_patient_zero=True):
 	global network, network_data
 	global n_infected, n_susceptible, n_immune
 	global n_spread, n_attack, n_control, n_control_spread
-	global population_size, initial_infection_prob, sr_amount
+	global population_size, sr_amount
 
 	n_infected = n_susceptible = n_immune = 0
 	n_attack = n_spread = n_control = n_control_spread = 0
@@ -105,7 +100,6 @@ def init(keep_patient_zero=True):
 	get_data_from_network()
 
 	population_size = len(network.nodes())
-	initial_infection_prob = 0.005 / population_size
 	sr_amount = int(population_size * 0.005)
 
 	if log_level >= 1:
@@ -143,10 +137,11 @@ def init(keep_patient_zero=True):
 
 def step():
 	global steps
-	global network_data
+	global network_data, network_change
 	global botnet_detected
 
 	nodes_modified = dict()
+	network_change = dict()
 
 	steps += 1
 	save_time()
@@ -170,12 +165,7 @@ def step():
 			# If the botnet has been detected, then the node might have an updated antivirus
 			# that allows the node to be immune against attacks
 			if can_update_antivirus(network_data[i]):
-				if i not in nodes_modified:
-					nodes_modified[i] = dict()
-				if 'immune' not in nodes_modified[i]:
-					nodes_modified[i]['immune'] = 1
-				else:
-					nodes_modified[i]['immune'] += 1
+				nodes_modified[i] = increase_immune_chance(i, nodes_modified)
 
 			# If peer to peer mode enabled
 			elif peer_to_peer and is_node_immune(network_data[i]):
@@ -184,12 +174,7 @@ def step():
 					# If the neighbor is online and not already updated
 					if is_node_online(network.node[j]) and not is_node_immune(network_data[j]):
 						# Update its antivirus
-						if j not in nodes_modified:
-							nodes_modified[j] = dict()
-						if 'immune' not in nodes_modified[j]:
-							nodes_modified[j]['immune'] = 1
-						else:
-							nodes_modified[j]['immune'] += 1
+						nodes_modified[j] = increase_immune_chance(j, nodes_modified)
 						break
 
 			# If the node is infected, then it might infect others
@@ -200,17 +185,10 @@ def step():
 				# If the node has been infected the previous step and is of type control
 				if is_node_control_spread(network_data[i]):
 
-					# Try to infect one of its neighbors nodes and make is of type spread
+					# Try to infect one of its neighbors nodes and make it of type spread
 					j = infect_random_neighbor_node(network, i)
 					if j is not None:
-						if j not in nodes_modified:
-							nodes_modified[j] = dict()
-						if 'infected' not in nodes_modified[j]:
-							nodes_modified[j]['infected'] = 1
-						else:
-							nodes_modified[j]['infected'] += 1
-						nodes_modified[j]['infected_control'] = True
-						nodes_modified[j]['parent'] = i
+						nodes_modified[j] = increase_infect_chance(j, i, nodes_modified, revert_control_spread=True)
 
 				# If the node is has the role to spread
 				if is_node_spreading(network_data[i]):
@@ -223,17 +201,10 @@ def step():
 						if is_node_online(network.node[j]) and is_node_susceptible(network_data[j]) and control_can_add_clients(parent):
 							# Try to infect it
 							if got_infected():
-								if j not in nodes_modified:
-									nodes_modified[j] = dict()
-								if 'infected' not in nodes_modified[j]:
-									nodes_modified[j]['infected'] = 1
-								else:
-									nodes_modified[j]['infected'] += 1
-								nodes_modified[j]['parent'] = parent
-
+								nodes_modified[j] = increase_infect_chance(j, parent, nodes_modified)
 								break
 	
-	network_data, network_change = update_network_status(nodes_modified)
+	update_network_status(nodes_modified)
 
 	# Get, print and save statistics
 	get_statistics()
@@ -242,39 +213,74 @@ def step():
 	save_step_data(network_change)
 	del nodes_modified
 
+def increase_immune_chance(index, nodes_modified):
+	if index in nodes_modified:
+		result = nodes_modified[index]
+	else:
+		result = dict()
+
+	if 'updates' not in result:
+		result['updates'] = 0
+
+	result['updates'] += 1
+
+	return result
+
+def increase_infect_chance(index_target, index_control_origin, nodes_modified, revert_control_spread=False):
+	result = dict()
+	result['attacks'] = dict()
+	if index_target in nodes_modified:
+		result = nodes_modified[index_target]
+
+	if 'attacks' not in result:
+		result['attacks'] = dict()
+
+	if index_control_origin not in result['attacks']:
+		result['attacks'][index_control_origin] = 1
+	else:
+		result['attacks'][index_control_origin] += 1
+
+	if revert_control_spread:
+		result['infected_control'] = True
+
+	return result
+
+
 
 def update_network_status(nodes_modified):
+	global network_change
+
 	network_change = dict()
-
 	for node in nodes_modified.keys():
-		n_infections = 0
-		if 'infected' in nodes_modified[node]:
-			n_infections = nodes_modified[node]['infected']
+		attacks = 0
+		attacks_info = dict()
+		if 'attacks' in nodes_modified[node]:
+			for attack_origin in nodes_modified[node]['attacks']:
+				attacks += nodes_modified[node]['attacks'][attack_origin]
+				attacks_info[attacks] = attack_origin
 
-		n_immunizations = 0
-		if 'immune' in nodes_modified[node]:
-			n_immunizations = nodes_modified[node]['immune']
+		updates = 0
+		if 'updates' in nodes_modified[node]:
+			updates = nodes_modified[node]['updates']
 
+		if attacks + updates > 0:
+			rnd = random.randint(1, attacks + updates)
+			
+			if rnd <= attacks:
+				rnd = random.randint(0, attacks)
 
-		if n_infections > n_immunizations:
-			update_network_data_infected(node, nodes_modified)
+				most_attacks_origin = attacks_info[attacks_info.keys()[0]]
+				for num in attacks_info:
+					if rnd <= num:
+						most_attacks_origin = attacks_info[num]
 
-		elif n_immunizations > n_infections:
-			update_network_data_immune(node)
-		else:
-			rnd = RD.random()
-			if rnd <= 0.5:
-				update_network_data_immune(node)
+				update_network_data_infected(node, most_attacks_origin, nodes_modified)
+
 			else:
-				update_network_data_infected(node, nodes_modified)
+				update_network_data_immune(node)
 
-		network_change[node] = network_data[node]
-
-	return network_data, network_change
-
-def update_network_data_infected(node, nodes_modified):
+def update_network_data_infected(node, parent, nodes_modified):
 	global network_data
-	parent = nodes_modified[node]['parent']
 
 	network_data[node]['state'] = INFECTED
 	network_data[node]['parent'] = parent
@@ -283,14 +289,18 @@ def update_network_data_infected(node, nodes_modified):
 		network_data[node]['role'] = ROLE_SPREAD
 		# Set the control_spread node to normal Control role
 		network_data[parent]['role'] = ROLE_CONTROL
+
 	else:
-		if len(network_data[parent]['clients']) <= MAX_CLIENTS:
+		if len(network_data[parent]['clients']) < MAX_CLIENTS - 1:
 			network_data[node]['role'] = choose_role()
 		else:
 			network_data[node]['role'] = ROLE_CONTROL_SPREAD
 			network_data[node]['clients'] = []
 
 	network_data[parent]['clients'].append(node)
+
+	network_change[node] = network_data[node]
+	network_change[parent] = network_data[parent]
 
 def update_network_data_immune(node):
 	global network_data
@@ -317,12 +327,15 @@ def update_network_data_immune(node):
 
 				for client in clients:
 					network_data[client]['parent'] = chosen
+					network_change[client] = network_data[client]
 
 				network_data[chosen]['parent'] = parent
 
 				print('NEW CHOSEN PARENT (CONTROL) node: ' + str(chosen))
 				print(network_data[chosen])
 				print('#' * 30)
+
+				network_change[chosen] = network_data[chosen]
 
 			# If this is not the patient zero
 			if node != parent:
@@ -334,7 +347,10 @@ def update_network_data_immune(node):
 					print(network_data[parent])
 					print('#' * 30)			
 				network_data[parent]['clients'].remove(node)
+				
+				network_change[parent] = network_data[parent]
 
+	network_change[node] = network_data[node]
 
 
 def get_random_online_node(network):
@@ -417,6 +433,7 @@ def is_node_control_spread(node):
 
 def botnet_got_detected():
 	if botnet_detected or n_immune > 0:
+		#print('!!!!!!!!!!!!!!!!! BOTNET DETECTED: ' + str(botnet_detected))
 		return True
 
 	for i in range(1, sr_amount):
@@ -431,7 +448,6 @@ def botnet_got_detected():
 		# of traffic it generates, hance it depends on its role.
 		rnd = RD.random()
 		multiplier = 1
-		threshold = botnet_detection_prob
 
 		if network_data[node]['role'] == ROLE_ATTACK:
 			multiplier = 1
@@ -440,7 +456,8 @@ def botnet_got_detected():
 		elif network_data[node]['role'] == ROLE_SPREAD:
 			multiplier = 5
 
-		if rnd < threshold * multiplier:
+		if rnd < botnet_detection_prob * multiplier:
+			#print('!!!!!!!!!!!!!!!!!!!!!! BOTNET DETECTED: ' + str(botnet_detected))
 			return True
 
 	return False
@@ -503,6 +520,7 @@ def print_data():
 		print('N. immune: ' + str(n_immune))
 		print('N. susceptible: ' + str(n_susceptible))
 		print('N. control & spread: ' + str(n_control_spread))
+		print('N. control: ' + str(n_control))
 		print('')
 
 def get_statistics():
@@ -545,8 +563,6 @@ def create_data_file():
 
 	line = ''
 	line += 'population_size' + ','
-	line += 'link_prob_base' + ','
-	line += 'initial_infection_prob' + ','
 	line += 'infection_prob' + ','
 	line += 'av_update_prob' + ','
 	line += 'spread_prob' + ','
@@ -555,8 +571,6 @@ def create_data_file():
 
 	line = ''
 	line += str(population_size) + ','
-	line += str(link_prob_base) + ','
-	line += str(initial_infection_prob) + ','
 	line += str(infection_prob) + ','
 	line += str(av_update_prob) + ','
 	line += str(spread_prob) + ','

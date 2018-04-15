@@ -10,17 +10,18 @@ import simplejson as json
 import csv
 
 # red, purple, 
-colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a']
+colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#000000', '#ff0000', '#00ff00']
 # line styles
 linestyles = ['-', '--', '-.', ':']
 
 results_path_base = '../data/results/'
 
 def loadStatisticsFile():
-	simulations_data = []
+	simulations_data = dict()
 	fieldNames = ('infected', 'immune', 'susceptible', 'spread', 'attack', 'control')
 
 	for sim in simulations:
+		index = sim[sim.rfind('/') + 1 : ]
 		with open(sim + '/results.csv', 'r') as f:
 			reader = csv.DictReader(f, fieldNames)
 			rows = [row for row in reader]
@@ -29,7 +30,7 @@ def loadStatisticsFile():
 
 			out = json.dumps(rows)
 
-		simulations_data.append(json.loads(out))
+		simulations_data[index] = json.loads(out)
 
 	return simulations_data
 
@@ -44,19 +45,36 @@ def represents_int(s):
 def init():
 	global step
 	global statistics, simulations_data
-	global infectedData, immuneData
-	global network_safe
+	global network_safe, max_data_len
 
 	network_safe = False
-
 	step = 0
+
 	statistics = loadStatisticsFile()
 
-	simulations_data = []
-	for sim in range(len(statistics)):
-		simulations_data.append(dict())
+	simulations_data = dict()
+	for sim in statistics:
+		simulations_data[sim] = dict()
 		simulations_data[sim]['infected'] = []
 		simulations_data[sim]['immune'] = []
+
+	max_data_len = max([len(statistics[num]) for num in statistics])
+
+	while step < max_data_len:
+
+		for sim_num in statistics:
+
+			if len(statistics[sim_num]) > step:
+				data_infected = int(statistics[sim_num][step]['infected'])
+				data_immune = int(statistics[sim_num][step]['immune'])
+			else:
+				data_infected = int(statistics[sim_num][len(statistics[sim_num]) - 1]['infected'])
+				data_immune = int(statistics[sim_num][len(statistics[sim_num]) - 1]['immune'])
+
+			simulations_data[sim_num]['infected'].append(data_infected)
+			simulations_data[sim_num]['immune'].append(data_immune)
+
+		step += 1
 
 def draw():
 	plot_title = 'Step ' + str(step)
@@ -67,43 +85,36 @@ def draw():
 	PL.figure(1)
 	PL.cla()
 
-	legend_handles = []
-	for i in range(len(simulations_data)):
-		selected_color = colors[int(i // 2)]
-		infected_style = linestyles[i % 2]
-		immune_style = linestyles[(i % 2) + 2]
+	i = 0
+	for sim_num in simulations_data:
+		selected_color = colors[int(i // 4)]
+		infected_style = linestyles[i % 4]
+		immune_style = linestyles[3]
 
-		label_infected = 'Sim n. ' + str(sim_first + i) + ' - infected'
-		sim_handle, = PL.plot(
-			simulations_data[i]['infected'], 
+		label_infected = 'Sim n. ' + sim_num + ' - infected'
+		label_immune = 'Sim n. ' + sim_num + ' - immune'
+
+		PL.plot(simulations_data[sim_num]['infected'], 
 			color=selected_color, linewidth=2, linestyle=infected_style, 
 			label=label_infected)
+
 		if not hide_immune:
-			PL.plot(
-				simulations_data[i]['immune'], 
-				color=selected_color, linewidth=2, linestyle=immune_style)
+			PL.plot(simulations_data[sim_num]['immune'], 
+				color=selected_color, linewidth=2, linestyle=immune_style, 
+				label=label_immune)
 
-		legend_handles.append(sim_handle)
+		i += 1
 
-	PL.legend(handles=legend_handles)
+	PL.legend()
 	PL.title(plot_title)
 	PL.show()
 
 def step():
 	global step, final_steps
-	global infectedData, immuneData, simulations_data
+	global simulations_data
 	global network_safe
 
-	simulations_over = True
-	for simulation in statistics:
-		if step < len(simulation):
-			new_infected = int(simulation[step]['infected'])
-		else:
-			new_infected = 0
-		
-		if new_infected > 0:
-			simulations_over = False
-			break
+	simulations_over = max_data_len >= step
 
 	if simulations_over:
 		final_steps -= 1
@@ -112,14 +123,6 @@ def step():
 		network_safe = True
 		interface.runEvent()
 	else:
-		for sim in range(len(statistics)):
-			if step < len(statistics[sim]):
-				simulations_data[sim]['infected'].append(int(statistics[sim][step]['infected']))
-				simulations_data[sim]['immune'].append(int(statistics[sim][step]['immune']))
-			else:
-				simulations_data[sim]['infected'].append(int(simulations_data[sim]['infected'][step - 1]))
-				simulations_data[sim]['immune'].append(int(simulations_data[sim]['immune'][step - 1]))
-
 		step += 1
 
 
@@ -136,13 +139,14 @@ def get_simulations(params):
 		print('ERROR - choose peer-to-peer or central-server mode.')
 		return
 
-	if '-hybrid' in params:
-		results_path_base += '-hybrid'
+	#if '-hybrid' in params:
+	results_path_base += '-hybrid'
 	results_path_base += '/'
 
-	hide_immune = False
-	if '-hide-immune' in params:
-		hide_immune = True
+	hide_immune = True
+	if '-immune' in params:
+		hide_immune = False
+
 
 	if '-all' in params:
 		simulations = [results_path_base + sim for sim in os.listdir(results_path_base) if represents_int(sim)]
@@ -152,45 +156,60 @@ def get_simulations(params):
 			sim_first = int(sim_first[1:])
 		else:
 			sim_first = int(sim_first)
-		
-		print('Showing data from all simulations:')
-		for simul in simulations:
-			print(simul)
+	
 	elif '-num' in params:
-		sim_first = params[params.index('-num') + 1]
-		if not represents_int(sim_first):
-			print('ERROR - Insert only one number.')
+		first_num_index = params.index('-num') + 1
+		last_num_index = len(params)
+		nums = params[first_num_index : last_num_index]
+		
+		if len(nums) == 0:
+			print('ERROR - Insert at least one number.')
 			return
 
-		sim_first = int(sim_first)
-
-		simulations = [results_path_base + str(sim_first)]
+		sim_first = 0
+		simulations = []
+		nums = parse_nums_input(nums)
+		for num in nums:
+			path_to_add = results_path_base + num
+			simulations.append(path_to_add)
+	
 		if not os.path.exists(simulations[0]):
 			print('ERROR - Couldn\'t find simulation\'s file: ' + str(simulations[0]))
 			return
 
-		print('Showing data from simulation number ' + str(sim_first) + '.')
-	elif '-range' in params:
-		sim_first = params[params.index('-range') + 1]
-		if not represents_int(sim_first):
-			print('ERROR \'-first\' - Insert only one number.')
-			return
-		sim_first = int(sim_first)
+	simulations.sort()
 
-		sim_last = params[params.index('-range') + 2]
-		if not represents_int(sim_last):
-			print('ERROR \'-last\' - Insert only one number.')
-			return
-		sim_last = int(sim_last)
-
-		simulations = [results_path_base + sim for sim in os.listdir(results_path_base) if represents_int(sim) and int(sim) >= sim_first and int(sim) <= sim_last]
-		print('Showing data from the following simulations files:')
-		for simul in simulations:
-			print(simul)
-
-		sim_count = sim_last - sim_first + 1
+	print('Showing data from the following simulations files:')
+	for simul in simulations:
+		print(simul)
 
 	return simulations
+
+def format_num(num):
+	if len(num) < 2:
+		result = '0' + num
+	else:
+		result = num
+
+	return result
+
+def parse_nums_input(nums):
+	results = []
+	for num in nums:
+		first = num
+		last = num
+
+		if '-' in num:
+			first = num.split('-')[0]
+			last = num.split('-')[1]
+
+		if first == last:
+			results.append(format_num(first))
+		else:
+			for i in range(int(first), int(last) + 1):
+				results.append(format_num(str(i)))
+
+	return results
 
 if __name__ == '__main__':
 	global simulations

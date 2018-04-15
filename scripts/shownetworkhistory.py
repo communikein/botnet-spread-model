@@ -2,6 +2,8 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.image as mpimg
 
+import pycxsimulator
+
 import pylab as PL
 import random as RD
 import scipy as SP
@@ -9,6 +11,7 @@ import networkx as NX
 import random
 import itertools
 
+import sys
 import os
 import pickle
 import numpy as np
@@ -17,9 +20,7 @@ SUSCEPTIBLE = 0
 INFECTED = 1
 IMMUNE = 2
 
-history_path_base = '../data/results/central-server-hybrid/01'
-simulation_number = 1
-history_path = history_path_base + str(simulation_number) + '/'
+results_path_base = '../data/results/'
 
 def load_network_start():
     graph = NX.read_gpickle('../data/graph-data-hybrid.p')
@@ -28,13 +29,17 @@ def load_network_start():
 def load_network_history(day, step):
     data = dict()
 
-    history_step_file = history_path + str(day) + '/'
+    history_path = results_path_base + sim_num + '/'
+    history_step_file = history_path + '0' * (2 - len(str(day))) + str(day) + '/'
     history_step_file += 'botnet-evolution-' + '0' * (4 - len(str(step))) + str(step) + '.p'
+
+    print(history_step_file)
 
     try:
         with open(history_step_file, 'rb') as origin:
             data = pickle.load(origin)
     except:
+        print('ERROR NOT FOUND')
         return None
 
     return data
@@ -137,6 +142,40 @@ def step():
         network.node[i]['role'] = history[i]['role']
     
 
+def get_simulations(params):
+    global results_path_base, sim_num
 
-import pycxsimulator
-pycxsimulator.GUI().start(func=[init,draw,step])
+    if '-central-server' in params:
+        results_path_base += 'central-server'
+        sim_num = params[params.index('-central-server') + 1]
+    elif '-p2p' in params:
+        results_path_base += 'peer-to-peer'
+        sim_num = params[params.index('-p2p') + 1]
+    else:
+        print('ERROR - choose peer-to-peer or central-server mode.')
+        return
+
+    #if '-hybrid' in params:
+    results_path_base += '-hybrid'
+    results_path_base += '/'
+
+    if len(sim_num) < 2:
+        sim_num = '0' + sim_num
+
+    simulations = [results_path_base + sim_num]
+
+    print('Showing data from the following simulations files:')
+    for simul in simulations:
+        print(simul)
+
+    return simulations
+
+
+if __name__ == '__main__':
+    global simulations
+    global final_steps
+    
+    simulations = get_simulations(sys.argv)
+
+    interface = pycxsimulator.GUI()
+    interface.start(func=[init,draw,step])
