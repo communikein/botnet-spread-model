@@ -9,12 +9,12 @@ import os
 import simplejson as json
 import csv
 
-# red, purple, 
 colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#000000', '#ff0000', '#00ff00']
-# line styles
 linestyles = ['-', '--', '-.', ':']
 
 results_path_base = '../data/results/'
+
+show_simulations = [False for i in range(50)]
 
 def loadStatisticsFile():
 	simulations_data = dict()
@@ -86,24 +86,28 @@ def draw():
 	PL.cla()
 
 	i = 0
-	for sim_num in simulations_data:
-		selected_color = colors[int(i // 4)]
-		infected_style = linestyles[i % 4]
-		immune_style = linestyles[3]
+	simulations_numbers = sorted(simulations_data.keys())
+	for i in range(0, len(simulations_numbers)):
+		sim_num = simulations_numbers[i]
 
-		label_infected = 'Sim n. ' + sim_num + ' - infected'
-		label_immune = 'Sim n. ' + sim_num + ' - immune'
+		if show_simulations[int(sim_num) - 1]:
+			selected_color = colors[int(i // 4)]
+			infected_style = linestyles[i % 4]
+			immune_style = linestyles[3]
 
-		PL.plot(simulations_data[sim_num]['infected'], 
-			color=selected_color, linewidth=2, linestyle=infected_style, 
-			label=label_infected)
+			label_infected = 'Sim n. ' + sim_num + ' - infected'
+			label_immune = 'Sim n. ' + sim_num + ' - immune'
 
-		if not hide_immune:
-			PL.plot(simulations_data[sim_num]['immune'], 
-				color=selected_color, linewidth=2, linestyle=immune_style, 
-				label=label_immune)
+			PL.plot(simulations_data[sim_num]['infected'], 
+				color=selected_color, linewidth=2, linestyle=infected_style, 
+				label=label_infected)
 
-		i += 1
+			if not hide_immune:
+				PL.plot(simulations_data[sim_num]['immune'], 
+					color=selected_color, linewidth=2, linestyle=immune_style, 
+					label=label_immune)
+
+			i += 1
 
 	PL.legend()
 	PL.title(plot_title)
@@ -211,6 +215,70 @@ def parse_nums_input(nums):
 
 	return results
 
+
+
+
+def simulation00(val='1234567890'):
+	global show_simulations
+
+	show_simulations = filter_simulations(base=0, val=val)
+
+	return val
+
+def simulation10(val='1234567890'):
+	global show_simulations
+
+	show_simulations = filter_simulations(base=10, val=val)
+
+	return val
+
+def simulation20(val='1234567890'):
+	global show_simulations
+
+	show_simulations = filter_simulations(base=20, val=val)
+
+	return val
+
+def simulation30(val='1234567890'):
+	global show_simulations
+
+	show_simulations = filter_simulations(base=30, val=val)
+
+	return val
+
+def simulation40(val='1234567890'):
+	global show_simulations
+
+	show_simulations = filter_simulations(base=40, val=val)
+
+	return val
+
+
+def filter_simulations(base, val):
+	result = [x for x in show_simulations]
+
+	for num in range(10):
+		index = base
+		if num == 0:
+			index += 9
+		else:
+			index += num - 1
+
+		user_input = str(val)
+		if '.' in user_input:
+			user_input = user_input[ : user_input.index('.')]
+		
+		if user_input == '-1':
+			result[index] = False
+		else:
+			if str(num) in user_input:
+				result[index] = True
+			else:
+				result[index] = False
+
+	return result
+
+
 if __name__ == '__main__':
 	global simulations
 	global final_steps
@@ -218,5 +286,6 @@ if __name__ == '__main__':
 	simulations = get_simulations(sys.argv)
 	final_steps = 5
 
-	interface = pycxsimulator.GUI()
+	params = [simulation00,simulation10,simulation20,simulation30,simulation40]
+	interface = pycxsimulator.GUI(parameterSetters=params)
 	interface.start(func=[init,draw,step])

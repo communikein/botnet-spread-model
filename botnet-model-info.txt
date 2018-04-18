@@ -15,3 +15,6 @@ Se il nodo Control padre ha già raggiunto il numero massimo di client, il nuovo
 Quando un nodo di tipo Spread (S) non ha nessun nodo suscettibile tra i suoi vicini diventa di tipo Attack (A), segnalando la cosa al nodo Control di cui è client (in questo modo il Control tiene traccia di quanti nodi di un certo tipo sono suoi client.)
 (?) Un nodo di tipo Attack (A) puù diventare di tipo Spread (S) solo se ci sono meno di MIN_SPREAD % nodi Spread client dello stesso nodo Control.
 
+
+Per non complicare troppo il modello si sommano gli attacchi subiti da un nodo e si confrontano con la somma dei tentativi di update dell'antivirus. Per esempio: attacks=273 ed updates=325; genero unn numero random tra 1 e (273 + 325) e se <= 273 allora vince attack, vince update in caso contrario.
+Nel caso vinca attack e ci sono state più origini per l'attacco, uso lo stesso principio per scegliere quale ha la meglio.

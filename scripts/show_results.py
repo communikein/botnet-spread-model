@@ -5,42 +5,39 @@ import pycxsimulator
 import pylab as PL
 
 import sys
-import os
 import simplejson as json
 import csv
 
-# red, purple, 
-colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a']
-# line styles
+colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#000000', '#ff0000', '#00ff00']
 linestyles = ['-', '--', '-.', ':']
 
-
-cs_cluster_1 = ['10']
-cs_cluster_2 = ['17']
-cs_cluster_3 = ['18']
-cs_cluster_4 = ['03', '05', '08']
-cs_cluster_5 = ['01', '02', '06', '07', '09', '11', '12', '15']
-cs_cluster_6 = ['04', '16']
-cs_cluster_7 = ['19']
-cs_cluster_8 = ['13']
-cs_cluster_9 = ['14', '20']
-
-cs_clusters = []
-cs_clusters.append(cs_cluster_1)
-cs_clusters.append(cs_cluster_2)
-cs_clusters.append(cs_cluster_3)
-cs_clusters.append(cs_cluster_4)
-cs_clusters.append(cs_cluster_5)
-cs_clusters.append(cs_cluster_6)
-cs_clusters.append(cs_cluster_7)
-cs_clusters.append(cs_cluster_8)
-cs_clusters.append(cs_cluster_9)
+cs_clusters = [
+	['15', '16', '27'], # 16 not sure 100% since it's way higher than 15 or 27
+	['01', '05', '11', '13', '17', '20', '22', '28', '33', '35', '41', '42', '46', '48', '49'],
+	['02', '03', '04', '06', '07', '08', '09', '14', '18', '19', '21', '23', '24', '25', '26', '29', '30', '31', '32', '34', '36', '37', '38', '39', '40', '44', '45', '47', '50']
+]
+p2p_clusters = [
+	['39'],	# 1
+	['42'],	# 2
+	['12'], # 3
+	['21', '29'], # 4
+	['09', '16', '47'], # 5
+	['30', '32', '40'], # 6
+	['11', '13', '33'], # 7
+	['04', '15', '24', '25', '27', '49'], # 8
+	['01', '02', '10', '31', '36', '43', '46'], # 9
+	['06', '07', '14', '22', '26', '35', '45'], # 10
+	['03', '05', '19', '20', '28', '41', '44', '50'], # 11
+	['08', '17', '18', '23', '34', '37', '38', '48'], # 12
+]
 
 
 results_path_base = '../data/results/'
 
-def loadStatisticsFile():
+def loadStatisticsFile(simulations):
 	simulations_data = dict()
+	simulations_data['cs'] = dict()
+	simulations_data['p2p'] = dict()
 	fieldNames = ('infected', 'immune', 'susceptible', 'spread', 'attack', 'control')
 
 	for sim in simulations:
@@ -53,121 +50,131 @@ def loadStatisticsFile():
 
 			out = json.dumps(rows)
 
-		simulations_data[index] = json.loads(out)
+		model = 'cs'
+		if 'peer-to-peer' in sim:
+			model = 'p2p'
+
+		simulations_data[model][index] = json.loads(out)
 
 	return simulations_data
-
-def represents_int(s):
-	try: 
-		int(s)
-		return True
-	except ValueError:
-		return False
 
 
 def init():
 	global step
-	global statistics, clusters_data
-	global network_safe, max_data_len
+	global clusters_data
 
-	network_safe = False
 	step = 0
 
-	statistics = loadStatisticsFile()
-
 	clusters_data = []
-	max_data_len = max([len(statistics[num]) for num in statistics])
+	if model == 'both':
+		max1 = max([len(statistics['cs'][num]) for num in statistics['cs']])
+		max2 = max([len(statistics['p2p'][num]) for num in statistics['p2p']])
+		max_data_len = max([max1, max2])
+	else:
+		max_data_len = max([len(statistics[model][num]) for num in statistics[model]])
 
 	while step < max_data_len:
 
-		for i in range(len(cs_clusters)):
+		for i in range(len(selected_model_clusters)):
 			
 			if len(clusters_data) <= i or clusters_data[i] == None:
 				clusters_data.append([])
 
-			buff_data = []
-			for sim_num in cs_clusters[i]:
-				if len(statistics[sim_num]) > step:
-					data = int(statistics[sim_num][step]['infected'])
-				else:
-					data = int(statistics[sim_num][len(statistics[sim_num]) - 1]['infected'])
-				buff_data.append(data)
-
-			clusters_data[i].insert(step, sum(buff_data) / float(len(buff_data)))
+			clusters_data[i].insert(step, get_simulation_data(i, step))
 
 		step += 1
 
-def draw():
-	plot_title = 'Step ' + str(step)
-	if network_safe:
-		plot_title += ' - NETWORK SAFE.'
-		print('NETWORK SAFE. Step ' + str(step))
+def get_simulation_data(cluster_index, step):
+	buff_data = []
 
+	origin_model = model
+	if model == 'both':
+		if cluster_index < selected_model_clusters_len[0]:
+			origin_model = 'cs'
+		else:
+			origin_model = 'p2p'
+
+	for sim_num in selected_model_clusters[cluster_index]:
+		if len(statistics[origin_model][sim_num]) > step:
+			data = int(statistics[origin_model][sim_num][step]['infected'])
+		else:
+			data = int(statistics[origin_model][sim_num][len(statistics[origin_model][sim_num]) - 1]['infected'])
+		buff_data.append(data)
+
+	return sum(buff_data) / float(len(buff_data))
+
+def draw():
 	PL.figure(1)
 	PL.cla()
 	
 	for i in range(len(clusters_data)):
-		selected_color = colors[i]
-		infected_style = linestyles[0]
+		selected_color, infected_style = get_line_style(i)
 
-		label_infected = 'Sim cluster ' + str(i + 1) + ' - infected'
+		label_infected = 'Cluster ' + str(i + 1) + ' (' + str(len(selected_model_clusters[i])) + ' sim)'
 		PL.plot(clusters_data[i], 
 			color=selected_color, linewidth=2, linestyle=infected_style, 
 			label=label_infected)
 
 	PL.legend()
-	PL.title(plot_title)
+	PL.title('Step ' + str(step) + ' - NETWORK SAFE.')
 	PL.show()
 
-def step():
-	global step, final_steps
-	global simulations_data
-	global network_safe
+def get_line_style(cluster_index):
+	index_color = cluster_index
+	index_style = 0
 
-	simulations_over = max_data_len >= step
+	if model == 'both':
+		index_color /= 2
 
-	if simulations_over:
-		final_steps -= 1
+		if cluster_index >= selected_model_clusters_len[0]:
+			index_style = 3
 
-	if final_steps == 0:
-		network_safe = True
-		interface.runEvent()
-	else:
-		step += 1
+	return colors[index_color], linestyles[index_style]
+
+
+def step(): return
 
 
 def get_simulations(params):
+	global selected_model_clusters, selected_model_clusters_len
 	global results_path_base
-	global sim_first, sim_count
-	global hide_immune
+	global model
 
-	if '-central-server' in params:
-		results_path_base += 'central-server'
+	if '-cs' in params:
+		results_path_base += 'central-server-hybrid/'
+		selected_model_clusters = cs_clusters
+		selected_model_clusters_len = [len(selected_model_clusters)]
+		model = 'cs'
 	elif '-p2p' in params:
-		results_path_base += 'peer-to-peer'
+		results_path_base += 'peer-to-peer-hybrid/'
+		selected_model_clusters = p2p_clusters
+		selected_model_clusters_len = [len(selected_model_clusters)]
+		model = 'p2p'
 	else:
-		print('ERROR - choose peer-to-peer or central-server mode.')
-		return
-
-	#if '-hybrid' in params:
-	results_path_base += '-hybrid'
-	results_path_base += '/'
-
+		selected_model_clusters = cs_clusters + p2p_clusters
+		selected_model_clusters_len = [len(cs_clusters), len(p2p_clusters)]
+		model = 'both'
 
 	simulations = []
-	for cluster in cs_clusters:
-		for sim in cluster:
-			path_to_add = results_path_base + sim
-			simulations.append(path_to_add)
+
+	if model == 'both':
+		for cluster in selected_model_clusters:
+			for sim in cluster:
+				if selected_model_clusters.index(cluster) < selected_model_clusters_len[0]:
+					simulations.append(results_path_base + 'central-server-hybrid/' + sim)
+				else:
+					simulations.append(results_path_base + 'peer-to-peer-hybrid/' + sim)
+	else:
+		for cluster in selected_model_clusters:
+			for sim in cluster:
+				simulations.append(results_path_base + sim)
 
 	return simulations
 
 if __name__ == '__main__':
-	global simulations
-	global final_steps
+	global statistics
 	
 	simulations = get_simulations(sys.argv)
-	final_steps = 5
+	statistics = loadStatisticsFile(simulations)
 
-	interface = pycxsimulator.GUI()
-	interface.start(func=[init,draw,step])
+	pycxsimulator.GUI().start(func=[init,draw,step])
