@@ -46,9 +46,14 @@ DEBUG = True
 # Base probability for link between two random nodes
 link_prob_base = 0.1
 
+
+devices_divider = 100000
+total_devices = int(3404265884 // devices_divider) - 102
+
 def loadInternetDevices():
-    with open('../data/internet-usage-data-cleaned-bounds.p', 'rb') as origin:
+    with open('../data/internet-usage-data-final.p', 'rb') as origin:
         data = pickle.load(origin)
+    del data['TOTAL']
 
     return data
 
@@ -58,31 +63,24 @@ def lookupInternetDevicesByCode(progress_devices, code):
 
     return None
 
-def loadCountriesCodes():
-    with open('../data/country-code.p', 'rb') as origin:
-        data = pickle.load(origin)
-
-    return data
-
 def loadCountryCodeFromTimeZone():
-    with open('../data/tzdb-list-tz-cleaned.p', 'rb') as origin:
+    with open('../data/tzf-list-tz-final.p', 'rb') as origin:
         data = pickle.load(origin)
 
     return data
-
 
 def init_devices_lists(internet_data):
     result = dict()
 
-    for country in internet_data:
+    for country_code in internet_data:
         data = dict()
-        devices = int(internet_data[country]['devices']) // devices_divider
-        if devices > 0 and country != 'total':
+        devices = int(internet_data[country_code]['devices']) // devices_divider
+        if devices > 0:
             data['devices'] = devices
-            data['bounds'] = internet_data[country]['bounds']
+            data['bounds'] = internet_data[country_code]['bounds']
             data['perc'] = 1.0
 
-            result[internet_data[country]['code'].lower()] = data
+            result[country_code.lower()] = data
 
     return result
             
@@ -96,7 +94,6 @@ def init_nodes(graph):
                 country = progress_devices.keys()[0]
                 bounds = progress_devices[country]['bounds']
                 lat, lng = pick_coords(bounds)
-
                 time_zone = get_time_zone(lat, lng, country)
 
                 if time_zone is not None:
@@ -150,10 +147,11 @@ def get_time_zone(latitude, longitude, country):
 
     try:
         tz_target_name = tf.timezone_at(lat=latitude, lng=longitude)
-        tz_target_name = check_time_zone(tz_target_name, country)
+        tz_target_name = check_time_zone(tz_target_name, country, latitude, longitude)
 
         if tz_target_name is None:
             return None
+
     except:
         return None
 
@@ -161,9 +159,10 @@ def get_time_zone(latitude, longitude, country):
     today_target = tz_target.localize(today)
     today_utc = utc.localize(today)
 
-    return (today_utc - today_target).total_seconds() // (60 * 60)
+    time_zone_offset = (today_utc - today_target).total_seconds() // (60 * 60)
+    return time_zone_offset
 
-def check_time_zone(name, country_bounds):
+def check_time_zone(name, country_bounds, latitude, longitude):
     # If the timezone coords are relatives to water, try again
     if name is None:
         return None
@@ -172,7 +171,7 @@ def check_time_zone(name, country_bounds):
         if name not in timezone_cc:
             return None
         else:
-            country = timezone_cc[name]['code']
+            country = timezone_cc[name]
 
             # Check whether the country from the bounds is the same as the one from the coords
             if country_bounds.lower() == country.lower():
@@ -309,10 +308,6 @@ if __name__ == "__main__":
     global progress_devices, original_devices, devices_divider, timezone_cc
     global debug, debug_country
     
-    timezone_cc = dict()
-    devices_divider = 100000
-    total_devices = int(3404265884 // devices_divider) - 102
-
     internet_data = loadInternetDevices()
     timezone_cc = loadCountryCodeFromTimeZone()
     progress_devices = init_devices_lists(internet_data)

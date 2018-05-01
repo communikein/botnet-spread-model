@@ -57,8 +57,20 @@ def init():
 		simulations_data[sim] = dict()
 		simulations_data[sim]['infected'] = []
 		simulations_data[sim]['immune'] = []
+		simulations_data[sim]['max_infected'] = 0
+		simulations_data[sim]['max_infected_step'] = 0
+		simulations_data[sim]['first_immune'] = 0
 
-	max_data_len = max([len(statistics[num]) for num in statistics])
+	if max_data_len < 0:
+		max_data_len = max([len(statistics[num]) for num in statistics])
+
+	steps = 0
+	for sim in statistics:
+		steps += len(statistics[sim])
+	
+	print('Avg steps: ' + str(int(steps / len(statistics.keys()))))
+	print('Max steps: ' + str(max([len(statistics[sim]) for sim in statistics])))
+	print('Min steps: ' + str(min([len(statistics[sim]) for sim in statistics])))
 
 	while step < max_data_len:
 
@@ -67,14 +79,33 @@ def init():
 			if len(statistics[sim_num]) > step:
 				data_infected = int(statistics[sim_num][step]['infected'])
 				data_immune = int(statistics[sim_num][step]['immune'])
+
+				if simulations_data[sim_num]['max_infected'] < data_infected:
+					simulations_data[sim_num]['max_infected'] = data_infected
+					simulations_data[sim_num]['max_infected_step'] = step
+				if simulations_data[sim_num]['first_immune'] == 0 and data_immune > 0:
+					simulations_data[sim_num]['first_immune'] = step
 			else:
 				data_infected = int(statistics[sim_num][len(statistics[sim_num]) - 1]['infected'])
 				data_immune = int(statistics[sim_num][len(statistics[sim_num]) - 1]['immune'])
 
 			simulations_data[sim_num]['infected'].append(data_infected)
 			simulations_data[sim_num]['immune'].append(data_immune)
+			simulations_data[sim_num]['tot_steps'] = len(statistics[sim_num])
 
 		step += 1
+
+	steps_to_zero = dict()
+	steps_to_zero_first_immune = dict()
+	for sim in simulations_data:
+		steps_to_zero[sim] = simulations_data[sim]['tot_steps'] - simulations_data[sim]['max_infected_step']
+		steps_to_zero_first_immune[sim] = simulations_data[sim]['tot_steps'] - simulations_data[sim]['first_immune']
+
+	print('Avg max infected step: ' + str(sum([simulations_data[sim]['max_infected_step'] for sim in simulations_data]) / len(simulations_data)))
+	print('Avg max infected: ' + str(sum([simulations_data[sim]['max_infected'] for sim in simulations_data]) / len(simulations_data)))
+	print('Avg from max infected to zero steps: ' + str(sum([steps_to_zero[sim] for sim in steps_to_zero]) / len(steps_to_zero)))
+	print('Avg first immune step: ' + str(sum([simulations_data[sim]['first_immune'] for sim in simulations_data]) / len(simulations_data)))
+	print('Avg from first immune to zero steps: ' + str(sum([steps_to_zero_first_immune[sim] for sim in steps_to_zero_first_immune]) / len(steps_to_zero_first_immune)))
 
 def draw():
 	plot_title = 'Step ' + str(step)
@@ -109,39 +140,35 @@ def draw():
 
 			i += 1
 
-	PL.legend()
+	if show_legend:
+		PL.legend()
 	PL.title(plot_title)
 	PL.show()
 
-def step():
-	global step, final_steps
-	global simulations_data
-	global network_safe
-
-	simulations_over = max_data_len >= step
-
-	if simulations_over:
-		final_steps -= 1
-
-	if final_steps == 0:
-		network_safe = True
-		interface.runEvent()
-	else:
-		step += 1
+def step(): return
 
 
 def get_simulations(params):
 	global results_path_base
 	global sim_first, sim_count
-	global hide_immune
+	global hide_immune, show_legend
+	global max_data_len
 
-	if '-central-server' in params:
+	if '-cs' in params:
 		results_path_base += 'central-server'
 	elif '-p2p' in params:
 		results_path_base += 'peer-to-peer'
 	else:
 		print('ERROR - choose peer-to-peer or central-server mode.')
 		return
+
+	max_data_len = -1
+	if '-limit' in params:
+		max_data_len = int(params[params.index('-limit') + 1])
+
+	show_legend = False
+	if '-legend' in params:
+		show_legend = True
 
 	#if '-hybrid' in params:
 	results_path_base += '-hybrid'
@@ -186,6 +213,8 @@ def get_simulations(params):
 	print('Showing data from the following simulations files:')
 	for simul in simulations:
 		print(simul)
+	print('#' * 20)
+	print('')
 
 	return simulations
 

@@ -639,9 +639,9 @@ if __name__ == '__main__':
 		peer_to_peer = True
 		repeat = int(sys.argv[sys.argv.index('-p2p') + 1])
 
-	if '-central-server' in sys.argv:
+	if '-cs' in sys.argv:
 		peer_to_peer = False
-		repeat = int(sys.argv[sys.argv.index('-central-server') + 1])
+		repeat = int(sys.argv[sys.argv.index('-cs') + 1])
 
 	if '-log' in sys.argv:
 		log_level = int(sys.argv[sys.argv.index('-log') + 1])		
@@ -667,9 +667,8 @@ if __name__ == '__main__':
 			latest_sim = 0
 		else:
 			latest_sim = max(simulations)
-		latest_sim_path = str(latest_sim + 1) + '/'
-
-		dest_path += latest_sim_path
+		next_sim = '0' * (2 - len(str(latest_sim + 1))) + str(latest_sim + 1)
+		dest_path += next_sim + '/'
 
 		if not os.path.exists(dest_path):
 			os.makedirs(dest_path)

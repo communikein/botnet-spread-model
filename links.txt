@@ -1,23 +1,18 @@
-Possible sources of data:
-- Countries population (2017): 
-	https://data.worldbank.org/indicator/SP.POP.TOTL?end=2017&start=2017&view=map&year=2017
+Sources of data:
+- TimeZone and City from coordinates 
+	https://pypi.python.org/pypi/timezonefinder
+- List of country codes for TimeZoneFinder Time Zones
+	https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 - Number of internet connected devices by country (2016): 
 	https://en.wikipedia.org/wiki/List_of_countries_by_number_of_Internet_users#List
-- Country name code
-	http://www.nationsonline.org/oneworld/country_code_list.htm
-- Country coords bounds
-	https://www.mapdevelopers.com/geocode_bounding_box.php
 - Countries ISO code
 	https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 - Get country bounds
 	https://github.com/googlemaps/google-maps-services-python
-- Coordinates precision
-	https://gis.stackexchange.com/questions/8650/measuring-accuracy-of-latitude-and-longitude
-- List of country codes for TimeZoneFinder Time Zones
-	https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
-	https://www.gps-coordinates.net/
-	http://www.geonames.org/export/
+
+Coordinates precision:
+- https://gis.stackexchange.com/questions/8650/measuring-accuracy-of-latitude-and-longitude
 
 Tools to convert Wikipedia table to JSON:
 - http://wikitable2csv.ggor.de/
@@ -25,4 +20,14 @@ Tools to convert Wikipedia table to JSON:
 - https://subtitletools.com/convert-text-files-to-utf8-online
 
 Fuchsia use the same peer-2-peer approach
+- https://fuchsia-review.googlesource.com/c/docs/+/113360/1/component_model_philosophy.md#109
 - https://9to5google.com/2018/02/16/fuchsia-friday-instant-apps/
+
+Possible problems related to P2P update model
+- https://thehackernews.com/2018/04/ccleaner-malware-attack.html
+
+Classic epidemic models VS Complex systems models
+- https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2729742/
+- https://www.sciencedirect.com/science/article/pii/S1755436516300627
+- https://www.brookings.edu/research/a-hybrid-epidemic-model-combining-the-advantages-of-agent-based-and-equation-based-approaches/
+- http://www.dtic.mil/get-tr-doc/pdf?AD=ada510899

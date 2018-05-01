@@ -102,11 +102,6 @@ def is_node_online(node):
     else:
         return False
 
-def get_nodes_color(network):
-    nodes_color = [get_node_color(network.node[i]) for i in network.nodes()]
-
-    return nodes_color
-
 
 def init():
     global step
@@ -145,7 +140,7 @@ def step():
 def get_simulations(params):
     global results_path_base, sim_num
 
-    if '-central-server' in params:
+    if '-cs' in params:
         results_path_base += 'central-server'
         sim_num = params[params.index('-central-server') + 1]
     elif '-p2p' in params:

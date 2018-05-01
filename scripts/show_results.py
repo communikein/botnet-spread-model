@@ -12,10 +12,12 @@ colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fd
 linestyles = ['-', '--', '-.', ':']
 
 cs_clusters = [
-	['15', '16', '27'], # 16 not sure 100% since it's way higher than 15 or 27
-	['01', '05', '11', '13', '17', '20', '22', '28', '33', '35', '41', '42', '46', '48', '49'],
-	['02', '03', '04', '06', '07', '08', '09', '14', '18', '19', '21', '23', '24', '25', '26', '29', '30', '31', '32', '34', '36', '37', '38', '39', '40', '44', '45', '47', '50']
+	['15', '16', '27'], # 1
+	['02', '04', '14', '19', '25', '31', '32', '37', '50'], # 2
+	['01', '05', '11', '13', '17', '20', '22', '28', '33', '35', '41', '42', '46', '48', '49'], # 3
+	['03', '06', '07', '08', '09', '18', '21', '23', '24', '26', '29', '30', '34', '36', '38', '39', '40', '44', '45', '47'], # 4
 ]
+
 p2p_clusters = [
 	['39'],	# 1
 	['42'],	# 2
@@ -30,6 +32,18 @@ p2p_clusters = [
 	['03', '05', '19', '20', '28', '41', '44', '50'], # 11
 	['08', '17', '18', '23', '34', '37', '38', '48'], # 12
 ]
+'''
+p2p_clusters = [
+	['39'],	# 1
+	['42'],	# 2
+	['21', '29'], # 4
+	['09', '16', '47'], # 5
+	['11', '12', '13', '30', '32', '33', '40'], # 6
+	['01', '02', '10', '31', '36', '43', '46'], # 7
+	['03', '05', '19', '20', '28', '41', '44', '50'], # 8
+	['04', '06', '07', '08', '14', '15', '17', '18', '22', '23', '24', '25', '26', '27', '35', '37', '38', '45', '48', '49'], # 9
+]
+'''
 
 
 results_path_base = '../data/results/'
@@ -62,16 +76,18 @@ def loadStatisticsFile(simulations):
 def init():
 	global step
 	global clusters_data
+	global max_data_len
 
 	step = 0
 
 	clusters_data = []
-	if model == 'both':
-		max1 = max([len(statistics['cs'][num]) for num in statistics['cs']])
-		max2 = max([len(statistics['p2p'][num]) for num in statistics['p2p']])
-		max_data_len = max([max1, max2])
-	else:
-		max_data_len = max([len(statistics[model][num]) for num in statistics[model]])
+	if max_data_len < 0:
+		if model == 'both':
+			max1 = max([len(statistics['cs'][num]) for num in statistics['cs']])
+			max2 = max([len(statistics['p2p'][num]) for num in statistics['p2p']])
+			max_data_len = max([max1, max2])
+		else:
+			max_data_len = max([len(statistics[model][num]) for num in statistics[model]])
 
 	while step < max_data_len:
 
@@ -115,8 +131,9 @@ def draw():
 			color=selected_color, linewidth=2, linestyle=infected_style, 
 			label=label_infected)
 
-	PL.legend()
-	PL.title('Step ' + str(step) + ' - NETWORK SAFE.')
+	if show_legend:
+		PL.legend()
+	PL.title('Step ' + str(step))
 	PL.show()
 
 def get_line_style(cluster_index):
@@ -124,10 +141,10 @@ def get_line_style(cluster_index):
 	index_style = 0
 
 	if model == 'both':
-		index_color /= 2
+		index_color = cluster_index % max(selected_model_clusters_len)
 
 		if cluster_index >= selected_model_clusters_len[0]:
-			index_style = 3
+			index_style = 1
 
 	return colors[index_color], linestyles[index_style]
 
@@ -138,7 +155,15 @@ def step(): return
 def get_simulations(params):
 	global selected_model_clusters, selected_model_clusters_len
 	global results_path_base
-	global model
+	global model, max_data_len, show_legend
+
+	max_data_len = -1
+	if '-limit' in params:
+		max_data_len = int(params[params.index('-limit') + 1])
+
+	show_legend = False
+	if '-legend' in params:
+		show_legend = True
 
 	if '-cs' in params:
 		results_path_base += 'central-server-hybrid/'
