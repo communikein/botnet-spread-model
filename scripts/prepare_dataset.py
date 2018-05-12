@@ -51,7 +51,7 @@ def add_country_codes_to_wikipedia_devices_country():
 
     return data
 
-def initGoogleMaps(api_key):
+def init_google_maps(api_key):
     gmaps = googlemaps.Client(key=api_key)
 
     return gmaps

@@ -45,7 +45,6 @@ p2p_clusters = [
 ]
 '''
 
-
 results_path_base = '../data/results/'
 
 def loadStatisticsFile(simulations):

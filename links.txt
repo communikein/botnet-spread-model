@@ -7,8 +7,11 @@ Sources of data:
 	https://en.wikipedia.org/wiki/List_of_countries_by_number_of_Internet_users#List
 - Countries ISO code
 	https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+	https://www.iso.org/obp/ui/#search
 - Get country bounds
 	https://github.com/googlemaps/google-maps-services-python
+- Get areas from coordinates
+	https://www.daftlogic.com/projects-google-maps-area-calculator-tool.htm
 
 
 Coordinates precision:
