@@ -35,11 +35,13 @@ utc = pytz.utc
 random.seed()
 
 # approximate radius of earth in km
-R = 6373.0
+earth_radius = 6373.0
+# approximate circumference of earth in km
+earth_circumference = 40075.0
+max_distance_on_earth = earth_circumference / 2
+
 
 world_image_path = '.\\world.jpg'
-img_width = -1
-img_height = -1
 
 lat_max = 90
 lng_max = 180
@@ -48,9 +50,6 @@ DEBUG = True
 
 # Base probability for link between two random nodes
 link_prob_base = 0.1
-
-devices_divider = 100000
-total_devices = int(3404265884 // devices_divider) - 102
 
 
 def loadInternetDevices():
@@ -71,6 +70,9 @@ def loadCountryCodeFromTimeZone():
 		data = pickle.load(origin)
 
 	return data
+
+def compute_total_devices(internet_data, devices_divider):
+	return sum([int(int(internet_data[country_code]['devices']) // devices_divider) for country_code in internet_data])
 
 def init_devices_lists(internet_data):
 	result = dict()
@@ -340,16 +342,16 @@ def get_distance(node_a, node_b):
 	a = sin(dlat / 2)**2 + cos(node_a['lat']) * cos(node_b['lat']) * sin(dlon / 2)**2
 	c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-	return R * c
+	return earth_radius * c
 
 def link_prob(distance, base_prob):
-	min_prob = 0.000039
-	max_prob = 0.999961
+	min_prob = 0.00001
+	max_prob = 0.99999
 
 	b = log(max_prob / min_prob) / (max_prob - min_prob)
 	a = min_prob / exp(b * min_prob)
 
-	prob = 1 - (distance / 20040.0)
+	prob = 1 - (distance / max_distance_on_earth)
 
 	exp_prob = a * exp(prob * b)
 
@@ -388,14 +390,20 @@ def pick_patient_zero(network):
 
 if __name__ == "__main__":
 	global progress_devices, original_devices, devices_divider, timezone_cc
+	global total_devices, devices_divider
+	global img_width, img_height
 	global debug, debug_country
 
 	img_width, img_height = Image.open(world_image_path).size
 	
 	internet_data = loadInternetDevices()
 	timezone_cc = loadCountryCodeFromTimeZone()
+
+	devices_divider = 100000
+	total_devices = compute_total_devices(internet_data, devices_divider)
 	progress_devices = init_devices_lists(internet_data)
 	original_devices = init_devices_lists(internet_data)
+
 
 	if DEBUG:
 		print('----------------------------------------------')
@@ -431,4 +439,4 @@ if __name__ == "__main__":
 
 	if DEBUG:
 		print('Saving network structure..')
-	NX.write_gpickle(network, '../data/graph-data-hybrid.p')
+	NX.write_gpickle(network, '../data/graph-data.p')

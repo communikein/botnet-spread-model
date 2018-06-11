@@ -24,7 +24,7 @@ world_image_path = '.\\world.jpg'
 results_path_base = '../data/results/'
 
 def load_network_start():
-	graph = NX.read_gpickle('../data/graph-data-hybrid.p')
+	graph = NX.read_gpickle('../data/graph-data.p')
 	return graph
 
 def load_network_history(day, step):
@@ -51,7 +51,7 @@ def draw_botnet_status_map(network):
 
 	PL.figure(1)
 	PL.cla()
-	PL.imshow(background_image, cmap='gray')
+	PL.imshow(background_image)
 
 	# To show also the edges use NX.draw, instead of NX.draw_networkx_nodes. 
 	# Also, add the following arguments: width=0.3, edge_color='#333333'
@@ -158,18 +158,14 @@ def get_simulations(params):
 	global results_path_base, sim_num
 
 	if '-cs' in params:
-		results_path_base += 'central-server'
+		results_path_base += 'central-server/'
 		sim_num = params[params.index('-cs') + 1]
 	elif '-p2p' in params:
-		results_path_base += 'peer-to-peer'
+		results_path_base += 'peer-to-peer/'
 		sim_num = params[params.index('-p2p') + 1]
 	else:
 		print('ERROR - choose peer-to-peer or central-server mode.')
 		return
-
-	#if '-hybrid' in params:
-	results_path_base += '-hybrid'
-	results_path_base += '/'
 
 	if len(sim_num) < 2:
 		sim_num = '0' + sim_num

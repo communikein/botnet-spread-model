@@ -26,7 +26,7 @@ lng_max = 180.0
 
 
 def load_network_start():
-    graph = NX.read_gpickle('../data/graph-data-hybrid.p')
+    graph = NX.read_gpickle('../data/graph-data.p')
     return graph
 
 
@@ -57,7 +57,7 @@ def init():
     network = load_network_start()
     network = update_nodes_positions(network)
 
-    NX.write_gpickle(network, '../data/graph-data-hybrid.p')
+    NX.write_gpickle(network, '../data/graph-data.p')
 
 def update_nodes_positions(network):
     positions = dict()

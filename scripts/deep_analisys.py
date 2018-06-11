@@ -23,7 +23,7 @@ ROLE_SPREAD = 7
 results_path_base = '../data/results/'
 
 def load_network_start():
-	graph = NX.read_gpickle('../data/graph-data-hybrid.p')
+	graph = NX.read_gpickle('../data/graph-data.p')
 	return graph
 
 def load_network_history(day, step):
@@ -155,18 +155,14 @@ def get_simulations(params):
 	global results_path_base, sim_num
 
 	if '-central-server' in params:
-		results_path_base += 'central-server'
+		results_path_base += 'central-server/'
 		sim_num = params[params.index('-central-server') + 1]
 	elif '-p2p' in params:
-		results_path_base += 'peer-to-peer'
+		results_path_base += 'peer-to-peer/'
 		sim_num = params[params.index('-p2p') + 1]
 	else:
 		print('ERROR - choose peer-to-peer or central-server mode.')
 		return
-
-	#if '-hybrid' in params:
-	results_path_base += '-hybrid'
-	results_path_base += '/'
 
 	if len(sim_num) < 2:
 		sim_num = '0' + sim_num

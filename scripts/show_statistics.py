@@ -1,6 +1,8 @@
 import matplotlib
 matplotlib.use('TkAgg')
 
+import numpy as np
+
 import pycxsimulator
 import pylab as PL
 
@@ -57,21 +59,18 @@ def init():
 		simulations_data[sim] = dict()
 		simulations_data[sim]['infected'] = []
 		simulations_data[sim]['immune'] = []
-		simulations_data[sim]['max_infected'] = 0
-		simulations_data[sim]['max_infected_step'] = 0
+		simulations_data[sim]['removal_after_detection'] = 0
+		simulations_data[sim]['peak_infection_bots'] = 0
+		simulations_data[sim]['peak_infection_susceptible'] = 0
+		simulations_data[sim]['peak_infection_step'] = 0
+		simulations_data[sim]['peak_infection_spread'] = 0
+		simulations_data[sim]['peak_infection_attack'] = 0
+		simulations_data[sim]['peak_infection_control'] = 0
 		simulations_data[sim]['first_immune'] = 0
 
 	if max_data_len < 0:
 		max_data_len = max([len(statistics[num]) for num in statistics])
-
-	steps = 0
-	for sim in statistics:
-		steps += len(statistics[sim])
 	
-	print('Avg steps: ' + str(int(steps / len(statistics.keys()))))
-	print('Max steps: ' + str(max([len(statistics[sim]) for sim in statistics])))
-	print('Min steps: ' + str(min([len(statistics[sim]) for sim in statistics])))
-
 	while step < max_data_len:
 
 		for sim_num in statistics:
@@ -80,9 +79,13 @@ def init():
 				data_infected = int(statistics[sim_num][step]['infected'])
 				data_immune = int(statistics[sim_num][step]['immune'])
 
-				if simulations_data[sim_num]['max_infected'] < data_infected:
-					simulations_data[sim_num]['max_infected'] = data_infected
-					simulations_data[sim_num]['max_infected_step'] = step
+				if simulations_data[sim_num]['peak_infection_bots'] < data_infected:
+					simulations_data[sim_num]['peak_infection_bots'] = data_infected
+					simulations_data[sim_num]['peak_infection_step'] = step
+					simulations_data[sim_num]['peak_infection_susceptible'] = int(statistics[sim_num][step]['susceptible'])
+					simulations_data[sim_num]['peak_infection_spread'] = int(statistics[sim_num][step]['spread'])
+					simulations_data[sim_num]['peak_infection_attack'] = int(statistics[sim_num][step]['attack'])
+					simulations_data[sim_num]['peak_infection_control'] = int(statistics[sim_num][step]['control'])
 				if simulations_data[sim_num]['first_immune'] == 0 and data_immune > 0:
 					simulations_data[sim_num]['first_immune'] = step
 			else:
@@ -92,20 +95,71 @@ def init():
 			simulations_data[sim_num]['infected'].append(data_infected)
 			simulations_data[sim_num]['immune'].append(data_immune)
 			simulations_data[sim_num]['tot_steps'] = len(statistics[sim_num])
+			simulations_data[sim_num]['removal_after_detection'] = simulations_data[sim_num]['tot_steps'] - simulations_data[sim_num]['first_immune']
 
 		step += 1
 
-	steps_to_zero = dict()
-	steps_to_zero_first_immune = dict()
-	for sim in simulations_data:
-		steps_to_zero[sim] = simulations_data[sim]['tot_steps'] - simulations_data[sim]['max_infected_step']
-		steps_to_zero_first_immune[sim] = simulations_data[sim]['tot_steps'] - simulations_data[sim]['first_immune']
+	
+	simulations_steps = np.asarray([len(statistics[sim]) for sim in statistics])
+	print('1. Total steps.')
+	print('Average: ' + str(np.average(simulations_steps)))
+	print('Standard Deviation: ' + str(np.std(simulations_steps)))
+	print('Max: ' + str(np.max(simulations_steps)))
+	print('Min: ' + str(np.min(simulations_steps)))
+	print('')
 
-	print('Avg max infected step: ' + str(sum([simulations_data[sim]['max_infected_step'] for sim in simulations_data]) / len(simulations_data)))
-	print('Avg max infected: ' + str(sum([simulations_data[sim]['max_infected'] for sim in simulations_data]) / len(simulations_data)))
-	print('Avg from max infected to zero steps: ' + str(sum([steps_to_zero[sim] for sim in steps_to_zero]) / len(steps_to_zero)))
-	print('Avg first immune step: ' + str(sum([simulations_data[sim]['first_immune'] for sim in simulations_data]) / len(simulations_data)))
-	print('Avg from first immune to zero steps: ' + str(sum([steps_to_zero_first_immune[sim] for sim in steps_to_zero_first_immune]) / len(steps_to_zero_first_immune)))
+	peak_infection_step = np.asarray([simulations_data[sim]['peak_infection_step'] for sim in simulations_data])
+	peak_infection_infected = np.asarray([simulations_data[sim]['peak_infection_bots'] for sim in simulations_data])
+	peak_infection_susceptible = np.asarray([simulations_data[sim]['peak_infection_susceptible'] for sim in simulations_data])
+	peak_infection_spread = np.asarray([simulations_data[sim]['peak_infection_spread'] for sim in simulations_data])
+	peak_infection_attack = np.asarray([simulations_data[sim]['peak_infection_attack'] for sim in simulations_data])
+	peak_infection_control = np.asarray([simulations_data[sim]['peak_infection_control'] for sim in simulations_data])
+	print('2. Peak infection.')
+	print('Steps - (' + 
+			'avg: ' + str(np.average(peak_infection_step)) + '; '
+			'std: ' + str(np.std(peak_infection_step)) + '; '
+			'max: ' + str(np.max(peak_infection_step)) + '; '
+			'min: ' + str(np.min(peak_infection_step)) + ')')
+	print('\t2.1 Infection status.')
+	print(	'\tSusceptible - (' +
+			'avg: ' + str(np.average(peak_infection_susceptible)) +  '; '
+			'std: ' + str(np.std(peak_infection_susceptible)) + '; '
+			'max: ' + str(np.max(peak_infection_susceptible)) + '; '
+			'min: ' + str(np.min(peak_infection_susceptible)) + ')')
+	print(	'\tInfected - (' +
+			'avg: ' + str(np.average(peak_infection_infected)) +  '; '
+			'std: ' + str(np.std(peak_infection_infected)) + '; '
+			'max: ' + str(np.max(peak_infection_infected)) + '; '
+			'min: ' + str(np.min(peak_infection_infected)) + ')')
+	print(	'\tSpread bots - (' + 
+			'avg: ' + str(np.average(peak_infection_spread)) + '; '
+			'std: ' + str(np.std(peak_infection_spread)) + '; '
+			'max: ' + str(np.max(peak_infection_spread)) + '; '
+			'min: ' + str(np.min(peak_infection_spread)) + ')')
+	print(	'\tAttack bots - (' + 
+			'avg: ' + str(np.average(peak_infection_attack)) + '; '
+			'std: ' + str(np.std(peak_infection_attack)) + '; '
+			'max: ' + str(np.max(peak_infection_attack)) + '; '
+			'min: ' + str(np.min(peak_infection_attack)) + ')')
+	print(	'\tControl bots - (' + 
+			'avg: ' + str(np.average(peak_infection_control)) + '; '
+			'std: ' + str(np.std(peak_infection_control)) + '; '
+			'max: ' + str(np.max(peak_infection_control)) + '; '
+			'min: ' + str(np.min(peak_infection_control))) + ')'
+	print('')
+
+	botnet_detection = np.asarray([simulations_data[sim]['first_immune'] for sim in simulations_data])
+	botnet_detection_removal = np.asarray([simulations_data[sim]['removal_after_detection'] for sim in simulations_data])
+	print('3. Botnet detection.') 
+	print('Average steps: ' + str(np.average(botnet_detection)))
+	print('Standard deviation: ' + str(np.std(botnet_detection)))
+	print('Max: ' + str(np.max(botnet_detection)))
+	print('Min: ' + str(np.min(botnet_detection)))
+	print('Average complete removal remaining steps: ' + str(np.average(botnet_detection_removal)))
+	print('Standard deviation: ' + str(np.std(botnet_detection_removal)))
+	print('Max: ' + str(np.max(botnet_detection_removal)))
+	print('Min: ' + str(np.min(botnet_detection_removal)))
+	print('')
 
 def draw():
 	plot_title = 'Step ' + str(step)
@@ -151,16 +205,22 @@ def step(): return
 def get_simulations(params):
 	global results_path_base
 	global sim_first, sim_count
-	global hide_immune, show_legend
+	global hide_immune, show_legend, show_plot
 	global max_data_len
 
 	if '-cs' in params:
-		results_path_base += 'central-server'
+		results_path_base += 'central-server/'
 	elif '-p2p' in params:
-		results_path_base += 'peer-to-peer'
+		results_path_base += 'peer-to-peer/'
 	else:
 		print('ERROR - choose peer-to-peer or central-server mode.')
 		return
+
+	'''
+	show_plot = True
+	if '-hide-plot':
+		show_plot = False
+	'''
 
 	max_data_len = -1
 	if '-limit' in params:
@@ -169,10 +229,6 @@ def get_simulations(params):
 	show_legend = False
 	if '-legend' in params:
 		show_legend = True
-
-	#if '-hybrid' in params:
-	results_path_base += '-hybrid'
-	results_path_base += '/'
 
 	hide_immune = True
 	if '-immune' in params:
@@ -210,11 +266,13 @@ def get_simulations(params):
 
 	simulations.sort()
 
+	'''
 	print('Showing data from the following simulations files:')
 	for simul in simulations:
 		print(simul)
 	print('#' * 20)
 	print('')
+	'''
 
 	return simulations
 
@@ -282,7 +340,6 @@ def simulation40(val='1234567890'):
 
 	return val
 
-
 def filter_simulations(base, val):
 	result = [x for x in show_simulations]
 
@@ -308,13 +365,19 @@ def filter_simulations(base, val):
 	return result
 
 
-if __name__ == '__main__':
-	global simulations
-	global final_steps
-	
-	simulations = get_simulations(sys.argv)
-	final_steps = 5
 
-	params = [simulation00,simulation10,simulation20,simulation30,simulation40]
-	interface = pycxsimulator.GUI(parameterSetters=params)
-	interface.start(func=[init,draw,step])
+global simulations
+global final_steps
+global show_plot
+
+show_plot = False
+final_steps = 5
+args = ['-p2p', '-limit', '300', '-all', '-legend']
+params = [simulation00, simulation10, simulation20, simulation30, simulation40]
+
+if len(sys.argv) > 1:
+	args = sys.argv
+simulations = get_simulations(args)
+
+interface = pycxsimulator.GUI(parameterSetters=params)
+interface.start(func=[init,draw,step])

@@ -32,7 +32,6 @@ def add_country_codes_to_wikipedia_devices_country():
 
         country_data = dict()
         country_data['devices'] = entry['devices']
-        country_data['percentage'] = entry['percentage']
 
         if pycountry_lookup(country) is not None:
             country_data['code'] = pycountry_lookup(country).alpha_2    

@@ -12,38 +12,20 @@ colors = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fd
 linestyles = ['-', '--', '-.', ':']
 
 cs_clusters = [
-	['15', '16', '27'], # 1
-	['02', '04', '14', '19', '25', '31', '32', '37', '50'], # 2
-	['01', '05', '11', '13', '17', '20', '22', '28', '33', '35', '41', '42', '46', '48', '49'], # 3
-	['03', '06', '07', '08', '09', '18', '21', '23', '24', '26', '29', '30', '34', '36', '38', '39', '40', '44', '45', '47'], # 4
+	['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '16', '17', '22', '25', '26', '27', '28', '29', 
+		'30', '31', '32', '33', '34', '35', '36', '37', '38', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49'], # 1
+	['11', '15', '19', '20', '21', '24'], # 2
+	['18', '23', '39', '50'], # 3
 ]
-
 p2p_clusters = [
-	['39'],	# 1
-	['42'],	# 2
-	['12'], # 3
-	['21', '29'], # 4
-	['09', '16', '47'], # 5
-	['30', '32', '40'], # 6
-	['11', '13', '33'], # 7
-	['04', '15', '24', '25', '27', '49'], # 8
-	['01', '02', '10', '31', '36', '43', '46'], # 9
-	['06', '07', '14', '22', '26', '35', '45'], # 10
-	['03', '05', '19', '20', '28', '41', '44', '50'], # 11
-	['08', '17', '18', '23', '34', '37', '38', '48'], # 12
+	['10', '13', '15', '18', '19', '20', '21', '23', '27', '31', '32', '34', '35', '38', '40', '45'], # 1
+	['04', '05', '11', '14', '25', '26', '29', '30', '41', '42', '47'], # 2
+	['03', '16', '17', '22', '33', '36', '37', '39', '43', '48'], # 3
+	['01', '07', '08', '12', '28', '49'], # 4
+	['09', '24', '46', '50'], # 5
+	['06', '44'], # 6
+	['02'], # 7
 ]
-'''
-p2p_clusters = [
-	['39'],	# 1
-	['42'],	# 2
-	['21', '29'], # 4
-	['09', '16', '47'], # 5
-	['11', '12', '13', '30', '32', '33', '40'], # 6
-	['01', '02', '10', '31', '36', '43', '46'], # 7
-	['03', '05', '19', '20', '28', '41', '44', '50'], # 8
-	['04', '06', '07', '08', '14', '15', '17', '18', '22', '23', '24', '25', '26', '27', '35', '37', '38', '45', '48', '49'], # 9
-]
-'''
 
 results_path_base = '../data/results/'
 
@@ -165,12 +147,12 @@ def get_simulations(params):
 		show_legend = True
 
 	if '-cs' in params:
-		results_path_base += 'central-server-hybrid/'
+		results_path_base += 'central-server/'
 		selected_model_clusters = cs_clusters
 		selected_model_clusters_len = [len(selected_model_clusters)]
 		model = 'cs'
 	elif '-p2p' in params:
-		results_path_base += 'peer-to-peer-hybrid/'
+		results_path_base += 'peer-to-peer/'
 		selected_model_clusters = p2p_clusters
 		selected_model_clusters_len = [len(selected_model_clusters)]
 		model = 'p2p'
@@ -185,9 +167,9 @@ def get_simulations(params):
 		for cluster in selected_model_clusters:
 			for sim in cluster:
 				if selected_model_clusters.index(cluster) < selected_model_clusters_len[0]:
-					simulations.append(results_path_base + 'central-server-hybrid/' + sim)
+					simulations.append(results_path_base + 'central-server/' + sim)
 				else:
-					simulations.append(results_path_base + 'peer-to-peer-hybrid/' + sim)
+					simulations.append(results_path_base + 'peer-to-peer/' + sim)
 	else:
 		for cluster in selected_model_clusters:
 			for sim in cluster:
