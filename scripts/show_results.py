@@ -103,6 +103,8 @@ def get_simulation_data(cluster_index, step):
 def draw():
 	PL.figure(1)
 	PL.cla()
+
+	ax = PL.subplot() # Defines ax variable by creating an empty plot
 	
 	for i in range(len(clusters_data)):
 		selected_color, infected_style = get_line_style(i)
@@ -111,6 +113,8 @@ def draw():
 		PL.plot(clusters_data[i], 
 			color=selected_color, linewidth=2, linestyle=infected_style, 
 			label=label_infected)
+		for label in (ax.get_xticklabels() + ax.get_yticklabels()):
+			 label.set_fontsize(15)
 
 	if show_legend:
 		PL.legend()
